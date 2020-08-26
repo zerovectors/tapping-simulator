@@ -845,6 +845,14 @@ function CreateChams(Obj)
 	  end
 end
 
+function createchangelog()
+	rconsolename("-- Changelog For Tapping Simuwulator -- ")
+	rconsoleprint("@@MAGENTA@@")
+	rconsoleprint("-- Changelog For Tapping Simuwulator "..version)
+	rconsoleprint("@@WHITE@@")
+	rconsoleprint("\n[+] Released The Tapping Simuwulator UI")
+end
+
 local Name = Instance.new("TextLabel")
 local Role = Instance.new("TextLabel")
 local Username = Instance.new("TextLabel")
@@ -1529,6 +1537,7 @@ end)
 library:Init()
 hintmsg.Text = "Initialization Complete, Enjoy 😎"
 wait(.5)
+createchangelog()
 uiwatermark()
 hintmsg:Remove()
 line()
