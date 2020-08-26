@@ -95,6 +95,7 @@ local PlayerESP = Instance.new("Folder", ESPFolder)
 PlayerESP.Name = "PlayerESP"
 local ItemESP = Instance.new("Folder", ESPFolder)
 ItemESP.Name = "ItemESP"
+game.Players.LocalPlayer.PlayerScripts:WaitForChild("Debounce"):Destroy()
 
 -- functions
 function fullbright()
@@ -853,6 +854,15 @@ function createchangelog()
 	rconsoleprint("\n[+] Released The Tapping Simuwulator UI")
 end
 
+function antiafk()
+	local vu = game:GetService("VirtualUser")
+		game:GetService("Players").LocalPlayer.Idled:connect(function()
+		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+		wait(1)
+		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
+	end)
+end
+
 local Name = Instance.new("TextLabel")
 local Role = Instance.new("TextLabel")
 local Username = Instance.new("TextLabel")
@@ -1538,6 +1548,7 @@ library:Init()
 hintmsg.Text = "Initialization Complete, Enjoy 😎"
 wait(.5)
 createchangelog()
+antiafk()
 uiwatermark()
 hintmsg:Remove()
 line()
@@ -1546,8 +1557,3 @@ checkwhitelist()
 sendnotification("[Vect0rs Hub] Loaded; Tapping Simuwulator UI")
 sendnotification("Version; "..version)
 createinfothingy()
-pcall(function()
-	while wait() do
-		game.Players.LocalPlayer.PlayerScripts:WaitForChild("Debounce"):Destroy()
-	end
-end)
