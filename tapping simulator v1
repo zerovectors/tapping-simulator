@@ -73,7 +73,7 @@ local Teams = game:GetService("Teams");
 local UserInput = game:GetService("UserInputService");
 local Light = game:GetService("Lighting");
 local HTTP = game:GetService("HttpService");
-local version = "1.2";
+local version = "1.3";
 local gamename = "Vect0rs Hub";
 local RepStor = game:GetService("ReplicatedStorage");
 local MyCam = GetCamera();
@@ -853,7 +853,12 @@ end
 function createchangelog()
 	rconsolename("-- Changelog For Tapping Simuwulator -- ")
 	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("-- Changelog For Tapping Simuwulator "..version)
+	rconsoleprint("\n-- Changelog For Tapping Simuwulator "..version)
+	rconsoleprint("@@WHITE@@")
+	rconsoleprint("\n[+] Added Unlock Keys")
+	rconsoleprint("\n[*] Adding Auto Delete Pets And Auto Summon Boss After I Rewrite How The Scripts Are Used In The UI")
+	rconsoleprint("@@MAGENTA@@")
+	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1.2")
 	rconsoleprint("@@WHITE@@")
 	rconsoleprint("\n[+] Added Egg Shop Teleports")
 	rconsoleprint("\n[+] Added Island Teleports")
@@ -865,16 +870,6 @@ function createchangelog()
 	rconsoleprint("\n[*] Fixed A Bug With The Notification Function")
 	rconsoleprint("\n[*] Adding Some Shit Wid The Boss Soon :tm:")
 	rconsoleprint("\n[*] Adding Auto Delete Pets Soon :tm:")
-	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1.1")
-	rconsoleprint("@@WHITE@@")
-	rconsoleprint("\n[*] Fixed The Rebirth Anti-Cheat Detection")
-	rconsoleprint("\n[+] Added AutoBuy Options")
-	rconsoleprint("\n[*] A lotta Shit Coming Soon:tm:")
-	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1")
-	rconsoleprint("@@WHITE@@")
-	rconsoleprint("\n[+] Released The Tapping Simuwulator UI")
 end
 
 function antiafk()
@@ -1541,6 +1536,20 @@ miscellaneous:AddButton({text = "Buy AutoTap", callback = function()
 		[2] = "UnlockAutoTap",
 	}
 	game:GetService("ReplicatedStorage").IngameStoreBuyProductMax:InvokeServer(unpack(args))
+end})
+
+miscellaneous:AddButton({text = "Unlock All Keys", callback = function()
+	for i = 1,10 do
+		for i,keys in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = keys.CFrame
+			wait(.2)
+		end
+		wait()
+		for i,keys in pairs(workspace.Teleporters.Keys:GetChildren()) do
+			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = keys.CFrame
+			wait(.2)
+		end
+	end
 end})
 
 miscellaneous:AddButton({text = "BH0P", callback = function()
