@@ -14,6 +14,7 @@ local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerov
 local visuals = library:CreateWindow("Visuals")
 local character = library:CreateWindow("Character")
 local miscellaneous = library:CreateWindow("Miscellaneous")
+local teleports = library:CreateWindow("Teleports")
 local uisettings = library:CreateWindow("UI Settings")
 local credits = library:CreateWindow("Credits")
 local settings = {
@@ -68,7 +69,7 @@ local Teams = game:GetService("Teams");
 local UserInput = game:GetService("UserInputService");
 local Light = game:GetService("Lighting");
 local HTTP = game:GetService("HttpService");
-local version = "1";
+local version = "1.1";
 local gamename = "Vect0rs Hub";
 local RepStor = game:GetService("ReplicatedStorage");
 local MyCam = GetCamera();
@@ -851,6 +852,12 @@ function createchangelog()
 	rconsoleprint("@@MAGENTA@@")
 	rconsoleprint("-- Changelog For Tapping Simuwulator "..version)
 	rconsoleprint("@@WHITE@@")
+	rconsoleprint("\n[*] Fixed The Rebirth Anti-Cheat Detection")
+	rconsoleprint("\n[+] Added AutoBuy Options")
+	rconsoleprint("\n[*] A lotta Shit Coming Soon:tm:")
+	rconsoleprint("@@MAGENTA@@")
+	rconsoleprint("\n-- Changelog For Tapping Simuwulator 1")
+	rconsoleprint("@@WHITE@@")
 	rconsoleprint("\n[+] Released The Tapping Simuwulator UI")
 end
 
@@ -1319,7 +1326,7 @@ miscellaneous:AddToggle({text = "AutoFarm", flag = "autofarm", callback = functi
     if library.flags["autofarm"] then
         sendnotification("AutoFarm Enabled")
         while library.flags["autofarm"] do
-            wait(.5)
+            wait()
             local args = {
                 [1] = false,
             }
@@ -1373,6 +1380,91 @@ miscellaneous:AddToggle({text = "Auto Collect Daily Rewards", flag = "autocollec
 	end
 end})
 
+miscellaneous:AddToggle({text = "Auto Buy Gem Booster", flag = "autogembooster", callback = function(a)
+	library.flags["autogembooster"] = a
+	if library.flags["autogembooster"] then
+		sendnotification("Auto Buy Gem Booster Every 300 Seconds Enabled")
+		while library.flags["autogembooster"] do
+			wait(300)
+			local args = {
+				[1] = "Potions",
+				[2] = "GemBuff",
+			}
+			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Buy Gem Booster Every 300 Seconds Disabled")
+	end
+end})
+
+miscellaneous:AddToggle({text = "Auto Buy Tap Booster", flag = "autotapbooster", callback = function(a)
+	library.flags["autotapbooster"] = a
+	if library.flags["autotapbooster"] then
+		sendnotification("Auto Buy Tap Booster Every 300 Seconds Enabled")
+		while library.flags["autotapbooster"] do
+			wait(300)
+			local args = {
+				[1] = "Potions",
+				[2] = "TapBuff",
+			}
+			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Buy Tap Every 300 Seconds Disabled")
+	end
+end})
+
+miscellaneous:AddToggle({text = "Auto Buy Pet Rarity Booster", flag = "autopetraritybooster", callback = function(a)
+	library.flags["autopetraritybooster"] = a
+	if library.flags["autopetraritybooster"] then
+		sendnotification("Auto Buy Pet Rarity Booster Every 300 Seconds Enabled")
+		while library.flags["autopetraritybooster"] do
+			wait(300)
+			local args = {
+				[1] = "Potions",
+				[2] = "PetRarity",
+			}
+			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Buy Pet Rarity Every 300 Seconds Disabled")
+	end
+end})
+
+miscellaneous:AddToggle({text = "Auto Buy Ultimate Tap Booster", flag = "autoultimatetapbooster", callback = function(a)
+	library.flags["autoultimatetapbooster"] = a
+	if library.flags["autoultimatetapbooster"] then
+		sendnotification("Auto Buy Ultimate Tap Booster Every 300 Seconds Enabled")
+		while library.flags["autoultimatetapbooster"] do
+			wait(300)
+			local args = {
+				[1] = "Potions",
+				[2] = "TapBuffLarge",
+			}
+			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Buy Ultimate Tap Every 300 Seconds Disabled")
+	end
+end})
+
+miscellaneous:AddToggle({text = "Auto Buy Insane Tap Booster", flag = "autoinsanetapbooster", callback = function(a)
+	library.flags["autoinsanetapbooster"] = a
+	if library.flags["autoinsanetapbooster"] then
+		sendnotification("Auto Buy Insane Tap Booster Every 300 Seconds Enabled")
+		while library.flags["autoinsanetapbooster"] do
+			wait(300)
+			local args = {
+				[1] = "Potions",
+				[2] = "TapBuffMegaHour",
+			}
+			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Buy Insane Tap Every 300 Seconds Disabled")
+	end
+end})
+
 miscellaneous:AddSlider({text = "Amount", flag = "autoopenamount", value = 1, min = 1, max = 3, callback = function(a)
     library.flags["autoopenamount"] = a
 end})
@@ -1389,7 +1481,7 @@ miscellaneous:AddToggle({text = "Auto Open Egg", flag = "autoopenegg", callback 
 	library.flags["autoopenegg"] = a
 	if library.flags["autoopenegg"] then
 		while library.flags["autoopenegg"] do
-			wait()
+			wait(.5)
 			local args = {
 				[1] = settings.chosenegg,
 				[2] = tonumber(library.flags["autoopenamount"]),
@@ -1421,7 +1513,7 @@ miscellaneous:AddToggle({text = "Auto Rebirth", flag = "autorebirthtoggle", call
     if library.flags["autorebirthtoggle"] then
         sendnotification("Auto Rebirth Enabled")
         while library.flags["autorebirthtoggle"] do
-            wait(.3)
+            wait(5)
             local args = {
                 [1] = tonumber(library.flags["rebirthamounts"]),
             }
@@ -1443,6 +1535,10 @@ miscellaneous:AddButton({text = "ReJoin", callback = function()
 	sendnotification("ReJoining")
 end})
 
+teleports:AddButton({text = "Spawn", callback = function()
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-4.68293381, 3.6104455, -1.81292093, 0.890263438, -3.4567833e-08, 0.455445975, 3.66134478e-09, 1, 6.87420041e-08, -0.455445975, -5.95309508e-08, 0.890263438)
+end})
+
 uisettings:AddColor({text = "Cursor Color", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a)
 	settings.CursorColor = a
 	game.CoreGui.uwuware.Cursor.ImageColor3 = settings.CursorColor
@@ -1459,28 +1555,31 @@ if game.Players.LocalPlayer.UserId == 278723686 then
 	local devmenu = library:CreateWindow("Developer Shit")
 	devmenu:AddButton({text = "Copy Char Vector3 Position", callback = function()
 		setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position))
-		notifmsg = "Copied Character Vector3 To Clipboard"
-		sendnotification()
+		sendnotification("Copied Character Vector3 To Clipboard")
 	end})
 	devmenu:AddButton({text = "Copy Char CFrame Position", callback = function()
 		setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame))
-		notifmsg = "Copied Character CFrame To Clipboard"
-		sendnotification()
+		sendnotification("Copied Character CFrame To Clipboard")
 	end})
 	devmenu:AddButton({text = "Custom Remote Spy", callback = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/remote-spys/master/sentinel_spy", true))()
+		sendnotification("Ran Custom Remote Spy")
 	end})
 	devmenu:AddButton({text = "Classic Dex (white mode)", callback = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/classic%20dex", true))()
+		sendnotification("Ran Classic Dex")
 	end})
 	devmenu:AddButton({text = "Dark Dex v2", callback = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dexv2", true))()
+		sendnotification("Ran Dark Dex v2")
 	end})
 	devmenu:AddButton({text = "Dark Dex v3", callback = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dex%20v3", true))()
+		sendnotification("Ran Dark Dex v3")
 	end})
 	devmenu:AddButton({text = "Dark Dex v4", callback = function()
 		loadstring(game:GetObjects('rbxassetid://2180084478')[1].Source)()
+		sendnotification("Ran Dark Dex v4")
 	end})
 elseif game.Players.LocalPlayer.UserId == 425451555 then
 	uisettings:AddToggle({text = "UI Watermark", state = true, callback = function(a)
@@ -1556,4 +1655,5 @@ createnotification()
 checkwhitelist()
 sendnotification("[Vect0rs Hub] Loaded; Tapping Simuwulator UI")
 sendnotification("Version; "..version)
+game.Players.LocalPlayer.PlayerScripts.Debounce:Destroy()
 createinfothingy()
