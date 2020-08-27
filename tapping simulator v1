@@ -43,6 +43,10 @@ local settings = {
 	lowgravity = false;
 	Cursorenabled = true;
 	eggs = { };
+	islands = { };
+	petshops = { };
+	potions = { };
+	upgrades = { };
 	chosenegg = nil;
 	CursorColor = Color3.fromRGB(221, 3, 255);
 	LineColour = Color3.fromRGB(221, 3, 255);
@@ -69,7 +73,7 @@ local Teams = game:GetService("Teams");
 local UserInput = game:GetService("UserInputService");
 local Light = game:GetService("Lighting");
 local HTTP = game:GetService("HttpService");
-local version = "1.1";
+local version = "1.2";
 local gamename = "Vect0rs Hub";
 local RepStor = game:GetService("ReplicatedStorage");
 local MyCam = GetCamera();
@@ -96,7 +100,6 @@ local PlayerESP = Instance.new("Folder", ESPFolder)
 PlayerESP.Name = "PlayerESP"
 local ItemESP = Instance.new("Folder", ESPFolder)
 ItemESP.Name = "ItemESP"
-game.Players.LocalPlayer.PlayerScripts:WaitForChild("Debounce"):Destroy()
 
 -- functions
 function fullbright()
@@ -852,11 +855,24 @@ function createchangelog()
 	rconsoleprint("@@MAGENTA@@")
 	rconsoleprint("-- Changelog For Tapping Simuwulator "..version)
 	rconsoleprint("@@WHITE@@")
+	rconsoleprint("\n[+] Added Egg Shop Teleports")
+	rconsoleprint("\n[+] Added Island Teleports")
+	rconsoleprint("\n[+] Added Auto Buy Upgrades")
+	rconsoleprint("\n[+] Added Auto Buy Potions")
+	rconsoleprint("\n[+] Added Auto Collect Rewards")
+	rconsoleprint("\n[+] Added Auto Spin Wheel")
+	rconsoleprint("\n[+] Added Buy Auto Tap")
+	rconsoleprint("\n[*] Fixed A Bug With The Notification Function")
+	rconsoleprint("\n[*] Adding Some Shit Wid The Boss Soon :tm:")
+	rconsoleprint("\n[*] Adding Auto Delete Pets Soon :tm:")
+	rconsoleprint("@@MAGENTA@@")
+	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1.1")
+	rconsoleprint("@@WHITE@@")
 	rconsoleprint("\n[*] Fixed The Rebirth Anti-Cheat Detection")
 	rconsoleprint("\n[+] Added AutoBuy Options")
 	rconsoleprint("\n[*] A lotta Shit Coming Soon:tm:")
 	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("\n-- Changelog For Tapping Simuwulator 1")
+	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1")
 	rconsoleprint("@@WHITE@@")
 	rconsoleprint("\n[+] Released The Tapping Simuwulator UI")
 end
@@ -868,6 +884,31 @@ function antiafk()
 		wait(1)
 		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
 	end)
+end
+
+function collectgemsreward()
+	local args = {
+		[1] = "GemsReward",
+	}
+	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))	
+end
+
+function collectsrtokenreward()
+	local args = {
+		[1] = "SRTokenReward",
+	}
+	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))	
+end
+
+function collecttapsreward()
+	local args = {
+		[1] = "TapsReward",
+	}
+	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
+end
+
+if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("Debounce") then
+	game.Players.LocalPlayer.PlayerScripts.Debounce:Destroy()
 end
 
 local Name = Instance.new("TextLabel")
@@ -1275,12 +1316,10 @@ character:AddToggle({text = "Fly", callback = function(a)
 	settings.vfly = a
 	if settings.vfly then
 		sFLY()
-		notifmsg = "Set Fly To ON"
-		sendnotification()
+		sendnotification("Fly Enabled")
 	else
 		NOFLY()
-		notifmsg = "Set Fly To OFF"
-		sendnotification()
+		sendnotification("Fly Disabled")
 	end
 end})
 
@@ -1363,106 +1402,61 @@ miscellaneous:AddToggle({text = "Auto Equip Best Pets", flag = "autoequippets", 
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Collect Daily Rewards", flag = "autocollectdailyreward", callback = function(a)
+miscellaneous:AddToggle({text = "Auto Collect Rewards", flag = "autocollectdailyreward", callback = function(a)
 	library.flags["autocollectdailyreward"] = a
 	if library.flags["autocollectdailyreward"] then
+		sendnotification("Auto Collect Daily Rewards Enabled")
 		while library.flags["autocollectdailyreward"] do
-			local args = {
-				[1] = "TapsReward",
-			}
-			game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
-			local args = {
-				[1] = "DailyTapBoost",
-			}
-			
-			game:GetService("ReplicatedStorage")["RepeatableRewards_TimeUntilAvailable"]:InvokeServer(unpack(args))
+			collectgemsreward()
+			collectsrtokenreward()
+			collecttapsreward()
 		end
+	else
+		sendnotification("Auto Collect Daily Rewards Disabled")
 	end
 end})
 
-local autobuyoptions = miscellaneous:AddFolder("Auto Buy Options")
-autobuyoptions:AddToggle({text = "Auto Buy Gem Booster", flag = "autogembooster", callback = function(a)
-	library.flags["autogembooster"] = a
-	if library.flags["autogembooster"] then
-		sendnotification("Auto Buy Gem Booster Every 300 Seconds Enabled")
-		while library.flags["autogembooster"] do
-			wait(300)
-			local args = {
-				[1] = "Potions",
-				[2] = "GemBuff",
-			}
+for i,upgrades in pairs(workspace.Lib.IngameStore.Products.Upgrades:GetChildren()) do
+	table.insert(settings.upgrades, upgrades) 
+end
+
+miscellaneous:AddList({text = "Auto Buy Upgrade Options", flag = "autobuyupgradeoption", values = settings.upgrades, callback = function(a)
+	library.flags["autobuyupgradeoption"] = a
+end})
+
+miscellaneous:AddToggle({text = "Auto Buy Upgrades", flag = "autobuyupgrades", callback = function(a)
+	library.flags["autobuyupgrades"] = a
+	if library.flags["autobuyupgrades"] then
+		sendnotification("Auto Buy Upgrades Enabled")
+		while library.flags["autobuyupgrades"] do
+			wait(.5)
+			local args = {"Upgrades", library.flags["autobuyupgradeoption"]}
 			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
 		end
 	else
-		sendnotification("Auto Buy Gem Booster Every 300 Seconds Disabled")
+		sendnotification("Auto Buy Upgrades Disabled")
 	end
 end})
 
-autobuyoptions:AddToggle({text = "Auto Buy Tap Booster", flag = "autotapbooster", callback = function(a)
-	library.flags["autotapbooster"] = a
-	if library.flags["autotapbooster"] then
-		sendnotification("Auto Buy Tap Booster Every 300 Seconds Enabled")
-		while library.flags["autotapbooster"] do
-			wait(300)
-			local args = {
-				[1] = "Potions",
-				[2] = "TapBuff",
-			}
-			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Buy Tap Every 300 Seconds Disabled")
-	end
+for i,potions in pairs(workspace.Lib.IngameStore.Products.Potions:GetChildren()) do
+	table.insert(settings.potions, potions) 
+end
+
+miscellaneous:AddList({text = "Auto Buy Potion Options", flag = "autobuypotionoption", values = settings.potions, callback = function(a)
+	library.flags["autobuypotionoption"] = a
 end})
 
-autobuyoptions:AddToggle({text = "Auto Buy Pet Rarity Booster", flag = "autopetraritybooster", callback = function(a)
-	library.flags["autopetraritybooster"] = a
-	if library.flags["autopetraritybooster"] then
-		sendnotification("Auto Buy Pet Rarity Booster Every 300 Seconds Enabled")
-		while library.flags["autopetraritybooster"] do
-			wait(300)
-			local args = {
-				[1] = "Potions",
-				[2] = "PetRarity",
-			}
+miscellaneous:AddToggle({text = "Auto Buy Potions", flag = "autobuypotions", callback = function(a)
+	library.flags["autobuypotions"] = a
+	if library.flags["autobuypotions"] then
+		sendnotification("Auto Buy Potions Enabled")
+		while library.flags["autobuypotions"] do
+			wait(.5)
+			local args = {"Potions", library.flags["autobuypotionoption"]}
 			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
 		end
 	else
-		sendnotification("Auto Buy Pet Rarity Every 300 Seconds Disabled")
-	end
-end})
-
-autobuyoptions:AddToggle({text = "Auto Buy Ultimate Tap Booster", flag = "autoultimatetapbooster", callback = function(a)
-	library.flags["autoultimatetapbooster"] = a
-	if library.flags["autoultimatetapbooster"] then
-		sendnotification("Auto Buy Ultimate Tap Booster Every 300 Seconds Enabled")
-		while library.flags["autoultimatetapbooster"] do
-			wait(300)
-			local args = {
-				[1] = "Potions",
-				[2] = "TapBuffLarge",
-			}
-			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Buy Ultimate Tap Every 300 Seconds Disabled")
-	end
-end})
-
-autobuyoptions:AddToggle({text = "Auto Buy Insane Tap Booster", flag = "autoinsanetapbooster", callback = function(a)
-	library.flags["autoinsanetapbooster"] = a
-	if library.flags["autoinsanetapbooster"] then
-		sendnotification("Auto Buy Insane Tap Booster Every 300 Seconds Enabled")
-		while library.flags["autoinsanetapbooster"] do
-			wait(300)
-			local args = {
-				[1] = "Potions",
-				[2] = "TapBuffMegaHour",
-			}
-			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Buy Insane Tap Every 300 Seconds Disabled")
+		sendnotification("Auto Buy Potions Disabled")
 	end
 end})
 
@@ -1482,7 +1476,7 @@ miscellaneous:AddToggle({text = "Auto Open Egg", flag = "autoopenegg", callback 
 	library.flags["autoopenegg"] = a
 	if library.flags["autoopenegg"] then
 		while library.flags["autoopenegg"] do
-			wait(.5)
+			wait()
 			local args = {
 				[1] = settings.chosenegg,
 				[2] = tonumber(library.flags["autoopenamount"]),
@@ -1505,7 +1499,7 @@ miscellaneous:AddToggle({text = "Auto Mega Tap", flag = "autotapsploshion", call
     end
 end})
 
-miscellaneous:AddList({text = "Auto Rebirth Amounts", flag = "rebirthamounts", value = "1", values = {"10", "50", "500", "1000"}, callback = function(a)
+miscellaneous:AddList({text = "Auto Rebirth Amounts", flag = "rebirthamounts", value = "1", values = {"10", "50", "500", "1000", "5000", "50000", "500000", "1000000", "5000000"}, callback = function(a)
     library.flags["rebirthamounts"] = a
 end})
 
@@ -1514,15 +1508,39 @@ miscellaneous:AddToggle({text = "Auto Rebirth", flag = "autorebirthtoggle", call
     if library.flags["autorebirthtoggle"] then
         sendnotification("Auto Rebirth Enabled")
         while library.flags["autorebirthtoggle"] do
-            wait(5)
+            wait(10)
             local args = {
                 [1] = tonumber(library.flags["rebirthamounts"]),
-            }
+			}
             game:GetService("ReplicatedStorage").PlayerRebirth:FireServer(unpack(args))
         end
     else
         sendnotification("Auto Rebirth Disabled")
     end
+end})
+
+miscellaneous:AddToggle({text = "Auto Spin Wheel", flag = "autospinwheel", callback = function(a)
+	library.flags["autospinwheel"] = a
+	if library.flags["autospinwheel"] then
+		sendnotification("Auto Spin Wheel Enabled")
+		while library.flags["autospinwheel"] do
+			wait()
+			local args = {
+				[1] = "WheelSpin",
+			}
+			game:GetService("ReplicatedStorage")["RepeatableRewards_TimeUntilAvailable"]:InvokeServer(unpack(args))
+		end
+	else
+		sendnotification("Auto Spin Wheel Disabled")
+	end
+end})
+
+miscellaneous:AddButton({text = "Buy AutoTap", callback = function()
+	local args = {
+		[1] = "Upgrades",
+		[2] = "UnlockAutoTap",
+	}
+	game:GetService("ReplicatedStorage").IngameStoreBuyProductMax:InvokeServer(unpack(args))
 end})
 
 miscellaneous:AddButton({text = "BH0P", callback = function()
@@ -1538,6 +1556,26 @@ end})
 
 teleports:AddButton({text = "Spawn", callback = function()
 	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-4.68293381, 3.6104455, -1.81292093, 0.890263438, -3.4567833e-08, 0.455445975, 3.66134478e-09, 1, 6.87420041e-08, -0.455445975, -5.95309508e-08, 0.890263438)
+end})
+
+for i,islands in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
+	table.insert(settings.islands, islands)
+end
+
+teleports:AddList({text = "Islands", flag = "islandselected", values = settings.islands, callback = function(a)
+	library.flags["islandselected"] = a
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.ReplicatedFirst.TeleportPositions:FindFirstChild(library.flags["islandselected"]).CFrame
+	sendnotification("Teleported To "..library.flags["islandselected"])
+end})
+
+for i,petshops in pairs(game.ReplicatedFirst.PetShopHolders:GetChildren()) do
+	table.insert(settings.petshops, petshops)
+end
+
+teleports:AddList({text = "Egg Shops", flag = "petshopselected", values = settings.petshops, callback = function(a)
+	library.flags["petshopselected"] = a
+	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.ReplicatedFirst.PetShopHolders:FindFirstChild(library.flags["petshopselected"]).CFrame
+	sendnotification("Teleported To "..library.flags["petshopselected"])
 end})
 
 uisettings:AddColor({text = "Cursor Color", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a)
@@ -1561,6 +1599,10 @@ if game.Players.LocalPlayer.UserId == 278723686 then
 	devmenu:AddButton({text = "Copy Char CFrame Position", callback = function()
 		setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame))
 		sendnotification("Copied Character CFrame To Clipboard")
+	end})
+	devmenu:AddButton({text = "Copy Char CFrame Position (Tp Vers)", callback = function()
+		setclipboard("game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new("..tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)..")")
+		sendnotification("Copied Character CFrame (Tp Vers) To Clipboard")
 	end})
 	devmenu:AddButton({text = "Custom Remote Spy", callback = function()
 		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/remote-spys/master/sentinel_spy", true))()
@@ -1656,5 +1698,4 @@ createnotification()
 checkwhitelist()
 sendnotification("[Vect0rs Hub] Loaded; Tapping Simuwulator UI")
 sendnotification("Version; "..version)
-game.Players.LocalPlayer.PlayerScripts.Debounce:Destroy()
 createinfothingy()
