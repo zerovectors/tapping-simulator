@@ -1380,7 +1380,8 @@ miscellaneous:AddToggle({text = "Auto Collect Daily Rewards", flag = "autocollec
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Buy Gem Booster", flag = "autogembooster", callback = function(a)
+local autobuyoptions = miscellaneous:AddFolder("Auto Buy Options")
+autobuyoptions:AddToggle({text = "Auto Buy Gem Booster", flag = "autogembooster", callback = function(a)
 	library.flags["autogembooster"] = a
 	if library.flags["autogembooster"] then
 		sendnotification("Auto Buy Gem Booster Every 300 Seconds Enabled")
@@ -1397,7 +1398,7 @@ miscellaneous:AddToggle({text = "Auto Buy Gem Booster", flag = "autogembooster",
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Buy Tap Booster", flag = "autotapbooster", callback = function(a)
+autobuyoptions:AddToggle({text = "Auto Buy Tap Booster", flag = "autotapbooster", callback = function(a)
 	library.flags["autotapbooster"] = a
 	if library.flags["autotapbooster"] then
 		sendnotification("Auto Buy Tap Booster Every 300 Seconds Enabled")
@@ -1414,7 +1415,7 @@ miscellaneous:AddToggle({text = "Auto Buy Tap Booster", flag = "autotapbooster",
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Buy Pet Rarity Booster", flag = "autopetraritybooster", callback = function(a)
+autobuyoptions:AddToggle({text = "Auto Buy Pet Rarity Booster", flag = "autopetraritybooster", callback = function(a)
 	library.flags["autopetraritybooster"] = a
 	if library.flags["autopetraritybooster"] then
 		sendnotification("Auto Buy Pet Rarity Booster Every 300 Seconds Enabled")
@@ -1431,7 +1432,7 @@ miscellaneous:AddToggle({text = "Auto Buy Pet Rarity Booster", flag = "autopetra
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Buy Ultimate Tap Booster", flag = "autoultimatetapbooster", callback = function(a)
+autobuyoptions:AddToggle({text = "Auto Buy Ultimate Tap Booster", flag = "autoultimatetapbooster", callback = function(a)
 	library.flags["autoultimatetapbooster"] = a
 	if library.flags["autoultimatetapbooster"] then
 		sendnotification("Auto Buy Ultimate Tap Booster Every 300 Seconds Enabled")
@@ -1448,7 +1449,7 @@ miscellaneous:AddToggle({text = "Auto Buy Ultimate Tap Booster", flag = "autoult
 	end
 end})
 
-miscellaneous:AddToggle({text = "Auto Buy Insane Tap Booster", flag = "autoinsanetapbooster", callback = function(a)
+autobuyoptions:AddToggle({text = "Auto Buy Insane Tap Booster", flag = "autoinsanetapbooster", callback = function(a)
 	library.flags["autoinsanetapbooster"] = a
 	if library.flags["autoinsanetapbooster"] then
 		sendnotification("Auto Buy Insane Tap Booster Every 300 Seconds Enabled")
