@@ -1,1710 +1,1675 @@
 -- ui library creation
-local hintmsg = Instance.new("Hint", Workspace)
-hintmsg.Text = "Initializing UI This can take up to 30 seconds"
+local hintmsg = Instance.new("Hint", game.CoreGui)
+local attempt = tick()
+hintmsg.Text = "Initializing UI Library This Can Take Up To 30 Seconds"
+local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/framework/master/uwuware%20framework", true))()
+local version = "2"
+local uiname = "Tapping Simulator"
+local ui = { }
+local main = { }
+local loopfunctions = { }
+local vectorshub = { }
+local notification = { }
+local loops = { }
+function GetCamera()
+	return workspace:FindFirstChildOfClass("Camera")
+end
+local mouse = game.Players.LocalPlayer:GetMouse()
+local TweenService = game:GetService("TweenService")
+local Plrs = game.Players
+local MyPlr = Plrs.LocalPlayer
+local MyChar = MyPlr.Character
+local MyCam = GetCamera()
+local char = game.Players.LocalPlayer.Character
+local Plrs = game:GetService("Players")
+local Run = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local PlayerGui = game.Players.LocalPlayer.PlayerGui
+local StartGui = game:GetService("StarterGui")
+local Teams = game:GetService("Teams")
+local g = MyPlr:FindFirstChild("PlayerGui") or MyPlr:WaitForChild("PlayerGui")
+local sg = game:GetService("StarterGui")
+local ps = game:GetService("Players")
+local Light = game:GetService("Lighting")
+local HTTP = game:GetService("HttpService")
+local messages_of_the_day = nil
+
 game:GetService("ScriptContext").Error:Connect(function(message)
 	print("Reason: "..message)
-	hintmsg.Text = "Initializing Failed, Error; "..message
+	main:Console("Initializing Failed, Error; "..message)
 	if message == "HttpError: ConnectFail" then
-		hintmsg.Text = "Initializing Failed!| Error; "..message.." | Fix; Re-Execute or ReJoin"
+		main:Console("Initializing Failed; Code 4 | ReJoin")
 	end
 	wait(6)
 	hintmsg:Remove()
 end)
-local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/framework/master/uwuware%20framework", true))()
-local visuals = library:CreateWindow("Visuals")
-local character = library:CreateWindow("Character")
-local miscellaneous = library:CreateWindow("Miscellaneous")
-local teleports = library:CreateWindow("Teleports")
-local uisettings = library:CreateWindow("UI Settings")
-local credits = library:CreateWindow("Credits")
-local settings = {
-	fullbright = false;
-  	PlaceTracersUnderCharacter = false;
-	CHAMSEnabled = false;
-	ESPEnabled = false;
-	vfly = false;
-	noclip = false;
-	TracersLength = 500;
-	CHAMSLength = 500;
-    ESPLength = 10000;
-    Blacklist = { };
- 	FriendList = { };
-  	Colors = {
-	    Enemy = Color3.fromRGB(221, 3, 255);
-	    Ally = Color3.fromRGB(221, 3, 255);
-	    Friend = Color3.fromRGB(221, 3, 255);
-	    Neutral = Color3.fromRGB(255,255,255);
-	    ColorOverride = nil;
-  	};
-  	CharAddedEvent = { };
-	Mob_ESP_CHAMS_Ran_Once = false;
-	superspeed = false;
-	superjump = false;
-	lowgravity = false;
-	Cursorenabled = true;
-	eggs = { };
-	islands = { };
-	petshops = { };
-	potions = { };
-	upgrades = { };
-	chosenegg = nil;
-	CursorColor = Color3.fromRGB(221, 3, 255);
-	LineColour = Color3.fromRGB(221, 3, 255);
-}
 
--- variables
-function GetCamera()
-	return workspace:FindFirstChildOfClass("Camera")
-end;
-local mouse = game.Players.LocalPlayer:GetMouse();
-local TweenService = game:GetService("TweenService");
-local Plrs = game.Players;
-local MyPlr = Plrs.LocalPlayer;
-local MyChar = MyPlr.Character;
-local MyMouse = MyPlr:GetMouse();
-local MyCam = GetCamera();
-local char = game.Players.LocalPlayer.Character;
-local Plrs = game:GetService("Players");
-local Run = game:GetService("RunService");
-local CoreGui = game:GetService("CoreGui");
-local PlayerGui = game.Players.LocalPlayer.PlayerGui;
-local StartGui = game:GetService("StarterGui");
-local Teams = game:GetService("Teams");
-local UserInput = game:GetService("UserInputService");
-local Light = game:GetService("Lighting");
-local HTTP = game:GetService("HttpService");
-local version = "1.3";
-local gamename = "Vect0rs Hub";
-local RepStor = game:GetService("ReplicatedStorage");
-local MyCam = GetCamera();
-if MyCam == nil then
-	return
-end;
-local Tracers = Instance.new("Folder", MyCam);
-	Tracers.Name = "Tracers";
-	local TracerData = { };
-	local TracerMT = setmetatable(TracerData, {
+do -- notification
+    function notification:Init()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/notification/master/createnotification", true))()
+    end
+    function notification:sendnotification(text)
+        game.CoreGui.uwuware.Notification:TweenSize(UDim2.new(0, 1917,0, 26), "Out", "Linear", .2, true)
+        wait(.2)
+        for i = 1, #text do
+            game.CoreGui.uwuware.Notification.Message.Text = string.sub(text, 1, i)
+            wait(.03)
+        end
+        wait(.5)
+        game.CoreGui.uwuware.Notification.Message.Text = ""
+        game.CoreGui.uwuware.Notification:TweenSize(UDim2.new(0, 1917,0, 0), "Out", "Linear", .2, true)
+    
+    end
+end
+do -- loop functions 
+    function loopfunctions:LoopRunning(name)
+		return loops[name].Running
+	end
+	function loopfunctions:CreateLoop(name, func, waitt, ...)
+		if loops[name] ~= nil then return end
+		loops[name] = { }
+		loops[name].Running = false
+		loops[name].Destroy = false
+		loops[name].Loop = coroutine.create(function(...)
+			while true do
+				if loops[name].Running then
+					func(...)
+				end
+
+				if loops[name].Destroy then
+					break
+				end
+
+				if type(wait) == "userdata" then
+					waitt:wait()
+				else
+					wait(waitt)
+				end
+			end
+		end)
+	end
+	function loopfunctions:RunLoop(name, func, waitt, ...)
+		if loops[name] == nil then
+			if func ~= nil then
+				self:CreateLoop(name, func, waitt, ...)
+			end
+		end
+
+		loops[name].Running = true
+		local succ, out = coroutine.resume(loops[name].Loop)
+		if not succ then
+			warn("Loop: " .. tostring(name) .. " ERROR: " .. tostring(out))
+		end
+	end
+	function loopfunctions:StopLoop(name)
+		if loops[name] == nil then return end
+
+		loops[name].Running = false
+	end
+	function loopfunctions:DestroyLoop(name)
+		if loops[name] == nil then return end
+
+		self:StopLoop(name)
+		loops[name].Destroy = true
+
+		loops[name] = nil
+	end
+end
+do -- loops
+    loopfunctions:CreateLoop("Time", function()
+        local timedata = os.date("*t")
+        _G.usertime = tostring(timedata.hour..";"..timedata.min..";"..timedata.sec)
+    end, Run.RenderStepped:wait())
+    loopfunctions:RunLoop("Version_Check", function()
+        local data = loadstring(game:HttpGet("https://pastebin.com/raw/MhwMYaFu", true))()
+        messages_of_the_day = data.messages_of_the_day
+        data = data["Tapping Simulator"]
+        local current_version, reason = data.version, data.reason
+        if version ~= current_version then
+            if data.force_kick then
+                MyPlr:Kick("This script has updated, please re-connect. Current Version: " .. tostring(current_version) .. " your version: " .. version .. "\nReason: " .. reason)
+            else
+                notification:sendnotification("Minor script update, restart ROBLOX to get latest version. Reason:" .. reason)
+                main:SystemChat("Minor script update, restart ROBLOX to get latest version. Reason:" .. reason)
+            end
+        end
+    end, 160)
+    loopfunctions:RunLoop("Messages Of The Day", function()
+        if messages_of_the_day == nil then return end
+        for i = 1, #messages_of_the_day do
+            main:SystemChat(tostring(messages_of_the_day[i]))
+            wait(60)
+        end
+    end, Run.RenderStepped)
+    loopfunctions:CreateLoop("AutoFarm", function()
+        local args = {
+            [1] = false,
+        }
+        game:GetService("ReplicatedStorage").PlayerClick:FireServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Mega Tap", function()
+        game:GetService("ReplicatedStorage").TapSplosion:InvokeServer()
+    end, 0)
+    loopfunctions:CreateLoop("Auto Spin Wheel", function()
+        game:GetService("ReplicatedStorage").WheelSpin:InvokeServer()
+        local args = {
+            [1] = "WheelSpin",
+        }
+        game:GetService("ReplicatedStorage")["RepeatableRewards_TimeUntilAvailable"]:InvokeServer(unpack(args))
+    end, 300)
+    loopfunctions:CreateLoop("Auto Rebirth", function()
+        local args = {
+            [1] = tonumber(library.flags["rebirthamounts"]),
+        }
+        game:GetService("ReplicatedStorage").PlayerRebirth:FireServer(unpack(args))
+    end, 0.5)
+    loopfunctions:CreateLoop("Auto Super Rebirth", function()
+        game:GetService("ReplicatedStorage").PlayerSuperRebirth:FireServer()
+    end)
+    loopfunctions:CreateLoop("Auto Buy Potions", function()
+        local args = {"Potions", library.flags["autobuypotions"]}
+		game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Auto Buy Upgrades", function()
+        local args = {"Upgrades", library.flags["autobuyupgrades"]}
+		game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Collect Taps Reward", function()
+        local args = {
+            [1] = "TapsReward",
+        }
+        game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Collect SRTokens Reward", function()
+        local args = {
+            [1] = "SRTokenReward",
+        }
+        game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Collect Gems Reward", function()
+        local args = {
+            [1] = "GemsReward",
+        }
+        game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
+    end, 0)
+    loopfunctions:CreateLoop("Auto Equip Best Pets", function()
+        game:GetService("ReplicatedStorage").EquipBestPets:InvokeServer()
+    end, 0)
+    loopfunctions:CreateLoop("Auto Upgrade Pets", function()
+        game:GetService("ReplicatedStorage").MergeAllPets:InvokeServer()
+    end, 0)
+    loopfunctions:CreateLoop("Auto Open Egg", function()
+        local args = {
+            [1] = library.flags["chosenegg"],
+            [2] = tonumber(library.flags["autoopenamount"]),
+        }
+        game:GetService("ReplicatedStorage").PetStoreRoll:InvokeServer(unpack(args))
+    end, 0)
+end
+do -- main
+    main.espsettings = {
+        TracersLength = 500;
+        CHAMSLength = 500;
+        ESPLength = 10000;
+        Blacklist = { };
+        FriendList = { };
+        Colors = {
+            Enemy = Color3.fromRGB(221, 3, 255);
+            Ally = Color3.fromRGB(221, 3, 255);
+            Friend = Color3.fromRGB(221, 3, 255);
+            Neutral = Color3.fromRGB(255,255,255);
+            ColorOverride = nil;
+        };
+        CharAddedEvent = { };
+        Mob_ESP_CHAMS_Ran_Once = false;
+    };
+    main.creator_accounts = {
+        [278723686] = true;
+    };
+    main.admin_accounts = {
+        [425451555] = true;
+        [516093458] = true;
+    };
+    main.whitelisted_accounts = {
+        [278723686] = true;
+        [425451555] = true;
+        [516093458] = true;
+        [454446503] = true;
+        [807746976] = true;
+        [311446911] = true;
+        [534973588] = true;
+    };
+    main.islandstable = { };
+    main.eggstable = { };
+    main.potionstable = { };
+    main.upgradestable = { };
+    if main.espsettings.CHAMSLength > 2048 then
+        main.espsettings.CHAMSLength = 2048
+    end;
+    if main.espsettings.TracersLength > 2048 then
+        main.espsettings.TracersLength = 2048
+    end;
+    splitline = Instance.new("Frame")
+    main.ESPFolder = Instance.new("Folder", CoreGui)
+    main.ESPFolder.Name = "ESP Stuff"
+    main.ItemChams = Instance.new("Folder", main.ChamsFolder);
+    main.ItemChams.Name = "ItemChams";
+    main.Tracers = Instance.new("Folder", MyCam);
+    main.Tracers.Name = "Tracers";
+    main.PlayerESP = Instance.new("Folder", main.ESPFolder)
+    main.PlayerESP.Name = "PlayerESP"
+    main.ChamsFolder = Instance.new("Folder", CoreGui);
+    main.ChamsFolder.Name = "Chams";
+    main.ItemESP = Instance.new("Folder", main.ESPFolder)
+    main.ItemESP.Name = "ItemESP"
+    main.PlayerChams = Instance.new("Folder", main.ChamsFolder);
+    main.PlayerChams.Name = "PlayerChams";
+	main.TracerData = { };
+	main.TracerMT = setmetatable(main.TracerData, {
 		__newindex = function(tab, index, val)
 			rawset(tab, index, val)
 		end
-});
-local ChamsFolder = Instance.new("Folder", CoreGui);
-ChamsFolder.Name = "Chams";
-local PlayerChams = Instance.new("Folder", ChamsFolder);
-PlayerChams.Name = "PlayerChams";
-local ItemChams = Instance.new("Folder", ChamsFolder);
-ItemChams.Name = "ItemChams";
-local ESPFolder = Instance.new("Folder", CoreGui)
-ESPFolder.Name = "ESP Stuff"
-local PlayerESP = Instance.new("Folder", ESPFolder)
-PlayerESP.Name = "PlayerESP"
-local ItemESP = Instance.new("Folder", ESPFolder)
-ItemESP.Name = "ItemESP"
-
--- functions
-function fullbright()
-	if settings.fullbright then
-		warn("fullbright enabled")
-		local bloom = Instance.new("BloomEffect");
-		bloom.Enabled = true;
-		bloom.Intensity = 0.55;
-		bloom.Size = 30;
-		bloom.Threshold = 0.95;
-		bloom.Parent = game.Lighting;
-		local colorcorrection = Instance.new("ColorCorrectionEffect");
-		colorcorrection.Enabled = true;
-		colorcorrection.Brightness = 0;
-		colorcorrection.Contrast = 0;
-		colorcorrection.Saturation = 1;
-		colorcorrection.TintColor = Color3.fromRGB(255,255,255);
-		colorcorrection.Parent = game.Lighting;
-		local sunrays = Instance.new("SunRaysEffect");
-		sunrays.Enabled = true;
-		sunrays.Intensity = 0.4;
-		sunrays.Spread = 1;
-		sunrays.Parent = game.Lighting;
-	else
-		warn("fullbright disabled")
-		for i,v in pairs(game.Lighting:GetChildren()) do
-			if v:IsA("BloomEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") then
-				v:Destroy();
-			end
-		end
-	end
-end
-
-vflyspeed = 1
-vehicleflyspeed = 1
-function sFLY(vfly)
-	  repeat wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and game.Players.LocalPlayer.Character:FindFirstChild('Humanoid')
-	  repeat wait() until mouse
-
-	  local T = game.Players.LocalPlayer.Character.HumanoidRootPart
-	  local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-	  local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-	  local SPEED = 0
-
-	  local function FLY()
-		  settings.vfly = true
-		  local BG = Instance.new('BodyGyro', T)
-		  local BV = Instance.new('BodyVelocity', T)
-		  BG.P = 9e4
-		  BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
-		  BG.cframe = T.CFrame
-		  BV.velocity = Vector3.new(0, 0, 0)
-		  BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
-		  spawn(function()
-			  repeat wait()
-			  if not vfly then
-				  game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
-			  end
-			  if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
-				  SPEED = 50
-			  elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
-				  SPEED = 0
-			  end
-			  if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
-				  BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
-				  lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
-			  elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
-				  BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
-			  else
-				  BV.velocity = Vector3.new(0, 0, 0)
-			  end
-			  BG.cframe = workspace.CurrentCamera.CoordinateFrame
-			  until not settings.vfly
-			  CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-			  lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
-			  SPEED = 0
-			  BG:destroy()
-			  BV:destroy()
-			  game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
-		  end)
-	  end
-	  mouse.KeyDown:connect(function(KEY)
-		  if KEY:lower() == 'w' then
-			  if vfly then
-				  CONTROL.F = vehicleflyspeed
-			  else
-				  CONTROL.F = vflyspeed
-			  end
-		  elseif KEY:lower() == 's' then
-			  if vfly then
-				  CONTROL.B = - vehicleflyspeed
-			  else
-				  CONTROL.B = - vflyspeed
-			  end
-		  elseif KEY:lower() == 'a' then
-			  if vfly then
-				  CONTROL.L = - vehicleflyspeed
-			  else
-				  CONTROL.L = - vflyspeed
-			  end
-		  elseif KEY:lower() == 'd' then
-			  if vfly then
-				  CONTROL.R = vehicleflyspeed
-			  else
-				  CONTROL.R = vflyspeed
-			  end
-		  elseif KEY:lower() == 'e' then
-			  if vfly then
-				  CONTROL.Q = vehicleflyspeed*2
-			  else
-				  CONTROL.Q = vflyspeed*2
-			  end
-		  elseif KEY:lower() == 'q' then
-			  if vfly then
-				  CONTROL.E = -vehicleflyspeed*2
-			  else
-				  CONTROL.E = -vflyspeed*2
-			  end
-		  end
-	  end)
-	  mouse.KeyUp:connect(function(KEY)
-		  if KEY:lower() == 'w' then
-			  CONTROL.F = 0
-		  elseif KEY:lower() == 's' then
-			  CONTROL.B = 0
-		  elseif KEY:lower() == 'a' then
-			  CONTROL.L = 0
-		  elseif KEY:lower() == 'd' then
-			  CONTROL.R = 0
-		  elseif KEY:lower() == 'e' then
-			  CONTROL.Q = 0
-		  elseif KEY:lower() == 'q' then
-			  CONTROL.E = 0
-		  end
-	  end)
-	  FLY()
-end
-
-function NOFLY()
-	  settings.vfly = false
-	  game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
-end
-
-if settings.TracersLength > 2048 then
-	  settings.TracersLength = 2048
-end
-
-if settings.CHAMSLength > 2048 then
-	  settings.CHAMSLength = 2048
-end
-
-function GetSizeOfObject(Obj)
-	  if Obj:IsA("BasePart") then
-		  return Obj.Size
-	  elseif Obj:IsA("Model") then
-		  return Obj:GetExtentsSize()
-	  end
-end
-
-function GetTeamColor(Plr)
-	  if Plr == nil then return nil end
-	  if not Plr:IsA("Player") then
-		  return nil
-	  end
-	  local PickedColor = settings.Colors.Enemy
-
-	  if Plr ~= nil then
-		  if game.PlaceId == 606849621 then
-			  if settings.Colors.ColorOverride == nil then
-				  if not settings.FreeForAll then
-					  if MyPlr.Team ~= nil and Plr.Team ~= nil then
-						  if settings.FriendList[Plr.Name] == nil then
-							  if MyPlr.Team.Name == "Prisoner" then
-								  if Plr.Team == MyPlr.Team or Plr.Team.Name == "Criminal" then
-									  PickedColor = settings.Colors.Ally
-								  else
-									  PickedColor = settings.Colors.Enemy
-								  end
-							  elseif MyPlr.Team.Name == "Criminal" then
-								  if Plr.Team == MyPlr.Team or Plr.Team.Name == "Prisoner" then
-									  PickedColor = settings.Colors.Ally
-								  else
-									  PickedColor = settings.Colors.Enemy
-								  end
-							  elseif MyPlr.Team.Name == "Police" then
-								  if Plr.Team == MyPlr.Team then
-									  PickedColor = settings.Colors.Ally
-								  else
-									  if Plr.Team.Name == "Criminal" then
-										  PickedColor = settings.Colors.Enemy
-									  elseif Plr.Team.Name == "Prisoner" then
-										  PickedColor = settings.Colors.Neutral
-									  end
-								  end
-							  end
-						  else
-							  PickedColor = settings.Colors.Friend
-						  end
-					  end
-				  else
-					  if settings.FriendList[Plr.Name] ~= nil then
-						  PickedColor = settings.Colors.Friend
-					  else
-						  PickedColor = settings.Colors.Enemy
-					  end
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  elseif game.PlaceId == 155615604 then
-			  if settings.Colors.ColorOverride == nil then
-				  if MyPlr.Team ~= nil and Plr.Team ~= nil then
-					  if settings.FriendList[Plr.Name] == nil then
-						  if MyPlr.Team.Name == "Inmates" then
-							  if Plr.Team.Name == "Inmates" then
-								  PickedColor = settings.Colors.Ally
-							  elseif Plr.Team.Name == "Guards" or Plr.Team.Name == "Criminals" then
-								  PickedColor = settings.Colors.Enemy
-							  else
-								  PickedColor = settings.Colors.Neutral
-							  end
-						  elseif MyPlr.Team.Name == "Guards" then
-							  if Plr.Team.Name == "Inmates" then
-								  PickedColor = settings.Colors.Neutral
-							  elseif Plr.Team.Name == "Criminals" then
-								  PickedColor = settings.Colors.Enemy
-							  elseif Plr.Team.Name == "Guards" then
-								  PickedColor = settings.Colors.Ally
-							  end
-						  elseif MyPlr.Team.Name == "Criminals" then
-							  if Plr.Team.Name == "Inmates" then
-								  PickedColor = settings.Colors.Ally
-							  elseif Plr.Team.Name == "Guards" then
-								  PickedColor = settings.Colors.Enemy
-							  else
-								  PickedColor = settings.Colors.Neutral
-							  end
-						  end
-					  else
-						  PickedColor = settings.Colors.Friend
-					  end
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  elseif game.PlaceId == 746820961 then
-			  if settings.Colors.ColorOverride == nil then
-				  if MyPlr:FindFirstChild("TeamC") and Plr:FindFirstChild("TeamC") then
-					  if Plr.TeamC.Value == MyPlr.TeamC.Value then
-						  PickedColor = settings.Colors.Ally
-					  else
-						  PickedColor = settings.Colors.Enemy
-					  end
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  elseif game.PlaceId == 1382113806 then
-			  if settings.Colors.ColorOverride == nil then
-				  if MyPlr:FindFirstChild("role") and Plr:FindFirstChild("role") then
-					  if MyPlr.role.Value == "assassin" then
-						  if Plr.role.Value == "target" then
-							  PickedColor = settings.Colors.Enemy
-						  elseif Plr.role.Value == "guard" then
-							  PickedColor = Color3.new(1, 135 / 255, 0)
-						  else
-							  PickedColor = settings.Colors.Neutral
-						  end
-					  elseif MyPlr.role.Value == "target" then
-						  if Plr.role.Value == "guard" then
-							  PickedColor = settings.Colors.Ally
-						  elseif Plr.role.Value == "assassin" then
-							  PickedColor = settings.Colors.Enemy
-						  else
-							  PickedColor = settings.Colors.Neutral
-						  end
-					  elseif MyPlr.role.Value == "guard" then
-						  if Plr.role.Value == "target" then
-							  PickedColor = settings.Colors.Friend
-						  elseif Plr.role.Value == "guard" then
-							  PickedColor = settings.Colors.Ally
-						  elseif Plr.role.Value == "assassin" then
-							  PickedColor = settings.Colors.Enemy
-						  else
-							  PickedColor = settings.Colors.Neutral
-						  end
-					  else
-						  if MyPlr.role.Value == "none" then
-							  PickedColor = settings.Colors.Neutral
-						  end
-					  end
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  elseif game.PlaceId == 1072809192 then
-			  if MyPlr:FindFirstChild("Backpack") and Plr:FindFirstChild("Backpack") then
-				  if MyPlr.Backpack:FindFirstChild("Knife") or MyChar:FindFirstChild("Knife") then
-					  if Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
-						  PickedColor = settings.Colors.Enemy
-					  else
-						  PickedColor = Color3.new(1, 135 / 255, 0)
-					  end
-				  elseif MyPlr.Backpack:FindFirstChild("Revolver") or MyChar:FindFirstChild("Revolver") then
-					  if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
-						  PickedColor = settings.Colors.Enemy
-					  elseif Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
-						  PickedColor = settings.Colors.Enemy
-					  else
-						  PickedColor = settings.Colors.Ally
-					  end
-				  else
-					  if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
-						  PickedColor = settings.Colors.Enemy
-					  elseif Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
-						  PickedColor = settings.Colors.Ally
-					  else
-						  PickedColor = settings.Colors.Neutral
-					  end
-				  end
-			  end
-		  elseif game.PlaceId == 142823291 or game.PlaceId == 1122507250 then
-			  if MyPlr:FindFirstChild("Backpack") and Plr:FindFirstChild("Backpack") then
-				  if MyPlr.Backpack:FindFirstChild("Knife") or MyChar:FindFirstChild("Knife") then
-					  if (Plr.Backpack:FindFirstChild("Gun") or Plr.Backpack:FindFirstChild("Revolver")) or (Plr.Character:FindFirstChild("Gun") or Plr.Character:FindFirstChild("Revolver")) then
-						  PickedColor = settings.Colors.Enemy
-					  else
-						  PickedColor = Color3.new(1, 135 / 255, 0)
-					  end
-				  elseif (MyPlr.Backpack:FindFirstChild("Gun") or MyPlr.Backpack:FindFirstChild("Revolver")) or (MyChar:FindFirstChild("Gun") or MyChar:FindFirstChild("Revolver")) then
-					  if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
-						  PickedColor = settings.Colors.Enemy
-					  else
-						  PickedColor = settings.Colors.Ally
-					  end
-				  else
-					  if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
-						  PickedColor = settings.Colors.Enemy
-					  elseif (Plr.Backpack:FindFirstChild("Gun") or Plr.Backpack:FindFirstChild("Revolver")) or (Plr.Character:FindFirstChild("Gun") or Plr.Character:FindFirstChild("Revolver")) then
-						  PickedColor = settings.Colors.Ally
-					  else
-						  PickedColor = settings.Colors.Neutral
-					  end
-				  end
-			  end
-		  elseif game.PlaceId == 379614936 then
-			  if settings.Colors.ColorOverride == nil then
-				  if not settings.FriendList[Plr.Name] then
-					  local targ = MyPlr:FindFirstChild("PlayerGui"):FindFirstChild("ScreenGui"):FindFirstChild("UI"):FindFirstChild("Target"):FindFirstChild("Img"):FindFirstChild("PlayerText")
-					  if targ then
-						  if Plr.Name:lower() == targ.Text:lower() then
-							  PickedColor = settings.Colors.Enemy
-						  else
-							  PickedColor = settings.Colors.Neutral
-						  end
-					  else
-						  PickedColor = settings.Colors.Neutral
-					  end
-				  else
-					  PickedColor = settings.Colors.Friend
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  elseif game.PlaceId == 983224898 then
-			  if (tick() - wildrevolvertick) > 10 or wildrevolverteamdata == nil then
-				  wildrevolverteamdata = RepStor.Functions.RequestGameData:InvokeServer()
-				  wildrevolvertick = tick()
-				  return settings.Colors.Neutral
-			  end
-			  local succ = pcall(function()
-				  if wildrevolverteamdata[Plr.Name] ~= nil then
-					  if settings.Colors.ColorOverride == nil then
-						  if not settings.FriendList[Plr.Name] then
-							  if wildrevolverteamdata[Plr.Name]["TeamName"] == wildrevolverteamdata[MyPlr.Name]["TeamName"] then
-								  PickedColor = settings.Colors.Ally
-							  else
-								  PickedColor = settings.Colors.Enemy
-							  end
-						  else
-							  PickedColor = settings.Colors.Friend
-						  end
-					  else
-						  PickedColor = settings.Colors.ColorOverride
-					  end
-				  else
-					  PickedColor = settings.Colors.Neutral
-				  end
-			  end)
-			  if not succ then
-				  wildrevolverteamdata = RepStor.Functions.RequestGameData:InvokeServer()
-				  wildrevolvertick = tick()
-				  return settings.Colors.Neutral
-			  end
-		  else
-			  if settings.Colors.ColorOverride == nil then
-				  if not settings.FreeForAll then
-					  if MyPlr.Team ~= Plr.Team and not settings.FriendList[Plr.Name] then
-						  PickedColor = settings.Colors.Enemy
-					  elseif MyPlr.Team == Plr.Team and not settings.FriendList[Plr.Name] then
-						  PickedColor = settings.Colors.Ally
-					  else
-						  PickedColor = settings.Colors.Friend
-					  end
-				  else
-					  if settings.FriendList[Plr.Name] ~= nil then
-						  PickedColor = settings.Colors.Friend
-					  else
-						  PickedColor = settings.Colors.Enemy
-					  end
-				  end
-			  else
-				  PickedColor = settings.Colors.ColorOverride
-			  end
-		  end
-	  end
-
-	  return PickedColor
-end
-
-function UpdateESP(Plr)
-	  if Plr ~= nil then
-		  local Find = PlayerESP:FindFirstChild("ESP Crap_" .. Plr.Name)
-		  if Find then
-			  local PickColor = GetTeamColor(Plr)
-			  Find.Frame.Names.TextColor3 = PickColor
-			  Find.Frame.Dist.TextColor3 = PickColor
-			  Find.Frame.Health.TextColor3 = PickColor
-			  --Find.Frame.Pos.TextColor3 = PickColor
-			  local GetChar = Plr.Character
-			  if MyChar and GetChar then
-				  local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
-				  local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
-				  local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
-				  if Find2 and Find3 then
-					  local pos = Find3.Position
-					  local Dist = (Find2.Position - pos).magnitude
-					  if Dist > settings.ESPLength or settings.Blacklist[Plr.Name] then
-						  Find.Frame.Names.Visible = false
-						  Find.Frame.Dist.Visible = false
-						  Find.Frame.Health.Visible = false
-						  return
-					  else
-						  Find.Frame.Names.Visible = true
-						  Find.Frame.Dist.Visible = true
-						  Find.Frame.Health.Visible = true
-					  end
-					  Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
-					  --Find.Frame.Pos.Text = "(X: " .. string.format("%.0f", pos.X) .. ", Y: " .. string.format("%.0f", pos.Y) .. ", Z: " .. string.format("%.0f", pos.Z) .. ")"
-					  if Find4 then
-						  Find.Frame.Health.Text = "Health: " .. string.format("%.0f", Find4.Health)
-					  else
-						  Find.Frame.Health.Text = ""
-					  end
-				  end
-			  end
-		  end
-	  end
-end
-
-function RemoveESP(Obj)
-	  if Obj ~= nil then
-		  local IsPlr = Obj:IsA("Player")
-		  local UseFolder = ItemESP
-		  if IsPlr then UseFolder = PlayerESP end
-
-		  local FindESP = ((IsPlr) and UseFolder:FindFirstChild("ESP Crap_" .. Obj.Name)) or FindESP(Obj)
-		  if FindESP then
-			  FindESP:Destroy()
-		  end
-	  end
-end
-
-local whitelistecheck = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/ui-library-test/master/totally%20secure%20whitelist", true))()
-if whitelistecheck[game:service('Players').LocalPlayer.UserId] then
-	warn("woo ur whitelisted man be happy!:D")
-else
-	game.Players.LocalPlayer:Kick('do u like dick an balls? FUCK U ur not whitelisted nigga dm me on discord; vect0rs#2851')
-end
-
-function CreateESP(Obj)
-	  if Obj ~= nil then
-		  local IsPlr = Obj:IsA("Player")
-		  local UseFolder = ItemESP
-		  local GetChar = ((IsPlr) and Obj.Character) or Obj
-		  local Head = GetChar:FindFirstChild("Head")
-		  local t = tick()
-		  if IsPlr then UseFolder = PlayerESP end
-		  if Head == nil then
-			  repeat
-				  Head = GetChar:FindFirstChild("Head")
-				  wait()
-			  until Head ~= nil or (tick() - t) >= 10
-		  end
-		  if Head == nil then return end
-		  
-		  local bb = Instance.new("BillboardGui")
-		  bb.Adornee = Head
-		  bb.ExtentsOffset = Vector3.new(0, 1, 0)
-		  bb.AlwaysOnTop = true
-		  bb.Size = UDim2.new(0, 5, 0, 5)
-		  bb.StudsOffset = Vector3.new(0, 3, 0)
-		  bb.Name = "ESP Crap_" .. Obj.Name
-		  bb.Parent = UseFolder
-		  
-		  local frame = Instance.new("Frame", bb)
-		  frame.ZIndex = 10
-		  frame.BackgroundTransparency = 1
-		  frame.Size = UDim2.new(1, 0, 1, 0)
-		  
-		  local TxtName = Instance.new("TextLabel", frame)
-		  TxtName.Name = "Names"
-		  TxtName.ZIndex = 10
-		  TxtName.Text = Obj.Name
-		  TxtName.BackgroundTransparency = 1
-		  TxtName.Position = UDim2.new(0, 0, 0, -45)
-		  TxtName.Size = UDim2.new(1, 0, 10, 0)
-		  TxtName.Font = "SourceSansBold"
-		  TxtName.TextSize = 13
-		  TxtName.TextStrokeTransparency = 0.5
-
-		  local TxtDist = nil
-		  local TxtHealth = nil
-		  if IsPlr then
-			  TxtDist = Instance.new("TextLabel", frame)
-			  TxtDist.Name = "Dist"
-			  TxtDist.ZIndex = 10
-			  TxtDist.Text = ""
-			  TxtDist.BackgroundTransparency = 1
-			  TxtDist.Position = UDim2.new(0, 0, 0, -35)
-			  TxtDist.Size = UDim2.new(1, 0, 10, 0)
-			  TxtDist.Font = "SourceSansBold"
-			  TxtDist.TextSize = 13
-			  TxtDist.TextStrokeTransparency = 0.5
-
-			  TxtHealth = Instance.new("TextLabel", frame)
-			  TxtHealth.Name = "Health"
-			  TxtHealth.ZIndex = 10
-			  TxtHealth.Text = ""
-			  TxtHealth.BackgroundTransparency = 1
-			  TxtHealth.Position = UDim2.new(0, 0, 0, -25)
-			  TxtHealth.Size = UDim2.new(1, 0, 10, 0)
-			  TxtHealth.Font = "SourceSansBold"
-			  TxtHealth.TextSize = 13
-			  TxtHealth.TextStrokeTransparency = 0.5
-		  else
-			  local ObjVal = Instance.new("ObjectValue", bb)
-			  ObjVal.Value = Obj
-		  end
-		  
-		  local PickColor = GetTeamColor(Obj) or settings.Colors.Neutral
-		  TxtName.TextColor3 = PickColor
-
-		  if IsPlr then
-			  TxtDist.TextColor3 = PickColor
-			  TxtHealth.TextColor3 = PickColor
-		  end
-	  end
-end
-	  
-function UpdateTracer(Plr)
-	  if settings.TracersEnabled then
-		  if MyChar then
-			  local MyTor = MyChar:FindFirstChild("HumanoidRootPart")
-			  local GetTor = TracerData[Plr.Name]
-			  if MyTor and GetTor ~= nil and GetTor.Parent ~= nil then
-				  local Dist = (MyTor.Position - GetTor.Position).magnitude
-				  if (Dist < settings.TracersLength and not settings.Blacklist[Plr.Name]) and not (MyChar:FindFirstChild("InVehicle") or GetTor.Parent:FindFirstChild("InVehicle")) then
-					  if not settings.PlaceTracersUnderCharacter then
-						  local R = MyCam:ScreenPointToRay(MyCam.ViewportSize.X / 2, MyCam.ViewportSize.Y, 0)
-						  Dist = (R.Origin - (GetTor.Position - Vector3.new(0, 3, 0))).magnitude
-						  Tracers[Plr.Name].Transparency = 1
-						  Tracers[Plr.Name].Size = Vector3.new(0.05, 0.05, Dist)
-						  Tracers[Plr.Name].CFrame = CFrame.new(R.Origin, (GetTor.Position - Vector3.new(0, 4.5, 0))) * CFrame.new(0, 0, -Dist / 2)
-						  Tracers[Plr.Name].BrickColor = BrickColor.new(GetTeamColor(Plr))
-						  Tracers[Plr.Name].BoxHandleAdornment.Transparency = 0
-						  Tracers[Plr.Name].BoxHandleAdornment.Size = Vector3.new(0.001, 0.001, Dist)
-						  Tracers[Plr.Name].BoxHandleAdornment.Color3 = GetTeamColor(Plr)
-					  else
-						  Dist = (MyTor.Position - (GetTor.Position - Vector3.new(0, 3, 0))).magnitude
-						  Tracers[Plr.Name].Transparency = 1
-						  Tracers[Plr.Name].Size = Vector3.new(0.3, 0.3, Dist)
-						  Tracers[Plr.Name].CFrame = CFrame.new(MyTor.Position - Vector3.new(0, 3, 0), (GetTor.Position - Vector3.new(0, 4.5, 0))) * CFrame.new(0, 0, -Dist / 2)
-						  Tracers[Plr.Name].BrickColor = BrickColor.new(GetTeamColor(Plr))
-						  Tracers[Plr.Name].BoxHandleAdornment.Transparency = 0
-						  Tracers[Plr.Name].BoxHandleAdornment.Size = Vector3.new(0.05, 0.05, Dist)
-						  Tracers[Plr.Name].BoxHandleAdornment.Color3 = GetTeamColor(Plr)
-					  end
-				  else
-					  Tracers[Plr.Name].Transparency = 1
-					  Tracers[Plr.Name].BoxHandleAdornment.Transparency = 1
-				  end
-			  end
-		  end
-	  end
-end
-
-function RemoveTracers(Plr)
-	  local Find = Tracers:FindFirstChild(Plr.Name)
-	  if Find then
-		  Find:Destroy()
-	  end
-end
-
-function CreateTracers(Plr)
-	  local Find = Tracers:FindFirstChild(Plr.Name)
-	  if not Find then
-		  local P = Instance.new("Part")
-		  P.Name = Plr.Name
-		  P.Material = "Neon"
-		  P.Transparency = 1
-		  P.Anchored = true
-		  P.Locked = true
-		  P.CanCollide = false
-		  local B = Instance.new("BoxHandleAdornment", P)
-		  B.Adornee = P
-		  B.Size = GetSizeOfObject(P)
-		  B.AlwaysOnTop = true
-		  B.ZIndex = 5
-		  B.Transparency = 0
-		  B.Color3 = GetTeamColor(Plr) or settings.Colors.Neutral
-		  P.Parent = Tracers
-
-		  coroutine.resume(coroutine.create(function()
-			  while Tracers:FindFirstChild(Plr.Name) do
-				  UpdateTracer(Plr)
-				  Run.RenderStepped:wait()
-			  end
-		  end))
-	  end
-end
-
-function FindCham(Obj)
-	  for i, v in next, ItemChams:GetChildren() do
-		  if v.className == "ObjectValue" then
-			  if v.Value == Obj then
-				  return v.Parent
-			  end
-		  end
-	  end
-
-	  return nil
-end
-	  
-function FindESP(Obj)
-	  for i, v in next, ItemESP:GetChildren() do
-		  if v.className == "ObjectValue" then
-			  if v.Value == Obj then
-				  return v.Parent
-			  end
-		  end
-	  end
-
-	  return nil
-end	
-	  
-function UpdateChams(Obj)
-	  if Obj == nil then return end
-
-	  if Obj:IsA("Player") then
-		  local Find = PlayerChams:FindFirstChild(Obj.Name)
-		  local GetChar = Obj.Character
-
-		  local Trans = 0
-		  if GetChar and MyChar then
-			  local GetHead = GetChar:FindFirstChild("Head")
-			  local GetTor = GetChar:FindFirstChild("HumanoidRootPart")
-			  local MyHead = MyChar:FindFirstChild("Head")
-			  local MyTor = MyChar:FindFirstChild("HumanoidRootPart")
-			  if GetHead and GetTor and MyHead and MyTor then
-				  if (MyTor.Position - GetTor.Position).magnitude > settings.CHAMSLength or settings.Blacklist[Obj.Name] then
-					  Trans = 1
-				  else
-					  --local MyCharStuff = MyChar:GetDescendants()
-					  local Ray = Ray.new(MyCam.CFrame.p, (GetTor.Position - MyCam.CFrame.p).unit * 2048)
-					  local part = workspace:FindPartOnRayWithIgnoreList(Ray, {MyChar})
-					  if part ~= nil then
-						  if part:IsDescendantOf(GetChar) then
-							  Trans = 0.9
-						  else
-							  Trans = 0
-						  end
-					  end
-				  end
-			  end
-		  end
-
-		  if Find then
-			  for i, v in next, Find:GetChildren() do
-				  if v.className ~= "ObjectValue" then
-					  v.Color3 = GetTeamColor(Obj) or settings.Colors.Neutral
-					  v.Transparency = Trans
-				  end
-			  end
-		  end
-	  end
-end
-
-function RemoveChams(Obj)
-	  if Obj ~= nil then
-		  local IsPlr = Obj:IsA("Player")
-		  local UseFolder = ItemChams
-		  if IsPlr then UseFolder = PlayerChams end
-
-		  local FindC = UseFolder:FindFirstChild(tostring(Obj)) or FindCham(Obj)
-		  if FindC then
-			  FindC:Destroy()
-		  end
-	  end
-end
-
-function CreateChams(Obj)
-	  if Obj ~= nil then
-		  local IsPlr = Obj:IsA("Player")
-		  local UseFolder = ItemChams
-		  local Crap = nil
-		  local GetTor = nil
-		  local t = tick()
-		  if IsPlr then
-			  Obj = Obj.Character
-			  UseFolder = PlayerChams
-		  end
-		  if Obj == nil then return end
-		  GetTor = Obj:FindFirstChild("HumanoidRootPart") or Obj:WaitForChild("HumanoidRootPart")
-		  if IsPlr then Crap = Obj:GetChildren() else Crap = Obj:GetDescendants() end
-
-		  local FindC = ((IsPlr) and UseFolder:FindFirstChild(Obj.Name)) or FindCham(Obj)
-		  if not FindC then
-			  FindC = Instance.new("Folder", UseFolder)
-			  FindC.Name = Obj.Name
-			  local ObjVal = Instance.new("ObjectValue", FindC)
-			  ObjVal.Value = Obj
-		  end
-
-		  for _, P in next, Crap do
-			  if P:IsA("PVInstance") and P.Name ~= "HumanoidRootPart" then
-				  local Box = Instance.new("BoxHandleAdornment")
-				  Box.Size = GetSizeOfObject(P)
-				  Box.Name = "Cham"
-				  Box.Adornee = P
-				  Box.AlwaysOnTop = true
-				  Box.ZIndex = 5
-				  Box.Transparency = 0
-				  Box.Color3 = ((IsPlr) and GetTeamColor(Plrs:GetPlayerFromCharacter(Obj))) or settings.Colors.Neutral
-				  Box.Parent = FindC
-			  end
-		  end
-	  end
-end
-
-function createchangelog()
-	rconsolename("-- Changelog For Tapping Simuwulator -- ")
-	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("\n-- Changelog For Tapping Simuwulator "..version)
-	rconsoleprint("@@WHITE@@")
-	rconsoleprint("\n[+] Added Unlock Keys")
-	rconsoleprint("\n[*] Adding Auto Delete Pets And Auto Summon Boss After I Rewrite How The Scripts Are Used In The UI")
-	rconsoleprint("@@MAGENTA@@")
-	rconsoleprint("\n-- Changelog For Tapping Simuwulator v1.2")
-	rconsoleprint("@@WHITE@@")
-	rconsoleprint("\n[+] Added Egg Shop Teleports")
-	rconsoleprint("\n[+] Added Island Teleports")
-	rconsoleprint("\n[+] Added Auto Buy Upgrades")
-	rconsoleprint("\n[+] Added Auto Buy Potions")
-	rconsoleprint("\n[+] Added Auto Collect Rewards")
-	rconsoleprint("\n[+] Added Auto Spin Wheel")
-	rconsoleprint("\n[+] Added Buy Auto Tap")
-	rconsoleprint("\n[*] Fixed A Bug With The Notification Function")
-	rconsoleprint("\n[*] Adding Some Shit Wid The Boss Soon :tm:")
-	rconsoleprint("\n[*] Adding Auto Delete Pets Soon :tm:")
-end
-
-function antiafk()
-	local vu = game:GetService("VirtualUser")
-		game:GetService("Players").LocalPlayer.Idled:connect(function()
-		vu:Button2Down(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-		wait(1)
-		vu:Button2Up(Vector2.new(0,0),workspace.CurrentCamera.CFrame)
-	end)
-end
-
-function collectgemsreward()
-	local args = {
-		[1] = "GemsReward",
-	}
-	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))	
-end
-
-function collectsrtokenreward()
-	local args = {
-		[1] = "SRTokenReward",
-	}
-	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))	
-end
-
-function collecttapsreward()
-	local args = {
-		[1] = "TapsReward",
-	}
-	game:GetService("ReplicatedStorage").CollectTimedReward:InvokeServer(unpack(args))
-end
-
-if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("Debounce") then
-	game.Players.LocalPlayer.PlayerScripts.Debounce:Destroy()
-end
-
-local Name = Instance.new("TextLabel")
-local Role = Instance.new("TextLabel")
-local Username = Instance.new("TextLabel")
-local Time = Instance.new("TextLabel")
-
-function createinfothingy()
-	local Info = Instance.new("ImageLabel")
-	local Line = Instance.new("Frame")
-
-	Info.Name = "Info"
-	Info.Parent = game.CoreGui:WaitForChild("uwuware")
-	Info.Active = true
-	Info.Draggable = true
-	Info.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	Info.BorderSizePixel = 0
-	Info.ClipsDescendants = true
-	Info.Position = UDim2.new(0.00731261447, 0, 0.28009823, 0)
-	Info.Size = UDim2.new(0, 257, 0, 22)
-	Info.SizeConstraint = Enum.SizeConstraint.RelativeYY
-	Info.ScaleType = Enum.ScaleType.Slice
-	Info.SliceCenter = Rect.new(100, 100, 100, 100)
-
-	Name.Name = "Name"
-	Name.Parent = Info
-	Name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Name.BackgroundTransparency = 1.000
-	Name.Position = UDim2.new(0, 0, 0.409090906, 0)
-	Name.Size = UDim2.new(0, 39, 0, 13)
-	Name.Font = Enum.Font.SourceSansBold
-	Name.Text = gamename
-	Name.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Name.TextSize = 14.000
-
-	Role.Name = "Role"
-	Role.Parent = Info
-	Role.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Role.BackgroundTransparency = 1.000
-	Role.Position = UDim2.new(0.175097257, 0, 0.409090906, 0)
-	Role.Size = UDim2.new(0, 39, 0, 13)
-	Role.Font = Enum.Font.SourceSansBold
-	Role.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Role.TextSize = 14.000
-
-	Username.Name = "Username"
-	Username.Parent = Info
-	Username.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Username.BackgroundTransparency = 1.000
-	Username.Position = UDim2.new(0.354085594, 0, 0.409090906, 0)
-	Username.Size = UDim2.new(0, 60, 0, 13)
-	Username.Font = Enum.Font.SourceSansBold
-	Username.Text = "Username"
-	Username.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Username.TextSize = 14.000
-
-	Time.Name = "Time"
-	Time.Parent = Info
-	Time.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Time.BackgroundTransparency = 1.000
-	Time.Position = UDim2.new(0.610894918, 0, 0.409090906, 0)
-	Time.Size = UDim2.new(0, 100, 0, 13)
-	Time.Font = Enum.Font.SourceSansBold
-	Time.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Time.TextSize = 14.000
-
-	Line.Name = "Line"
-	Line.Parent = Info
-	Line.BackgroundColor3 = Color3.fromRGB(221, 3, 255)
-	Line.BorderSizePixel = 0
-	Line.Size = UDim2.new(0, 257, 0, 5)
-
-
-	Role.Text = "[member]"
-	Username.Text = game.Players.LocalPlayer.Name
-	if game.Players.LocalPlayer.UserId == 278723686 then
-		Role.Text = "[dev]"
-		Username.Text = "Vect0rs"
-	elseif game.Players.LocalPlayer.UserId == 425451555 then
-		Role.Text = "[staff]"
-		Username.Text = "Smail"
-	end
-
-	while wait() do 
-		local timedata = os.date("*t")
-		Time.Text = timedata.hour..";"..timedata.min..";"..timedata.sec
-	end
-end
-
-function createnotification()
-	local Notification = Instance.new("Frame")
-	local Message = Instance.new("TextLabel")
-	local Line = Instance.new("Frame")
-
-	--Properties:
-
-	Notification.Name = "Notification"
-	Notification.Parent = game.CoreGui:WaitForChild("uwuware")
-	Notification.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-	Notification.BorderSizePixel = 0
-	Notification.ClipsDescendants = true
-	Notification.Position = UDim2.new(0, 0, -0.00484652817, 0)
-	Notification.Size = UDim2.new(0, 1917, 0, 0)
-
-	Line.Name = "Line"
-	Line.Parent = Notification
-	Line.BackgroundColor3 = Color3.fromRGB(221, 3, 255)
-	Line.BorderSizePixel = 0
-	Line.Position = UDim2.new(0, 0, 0.807692289, 0)
-	Line.Size = UDim2.new(0, 1917, 0, 5)
-
-	Message.Name = "Message"
-	Message.Parent = Notification
-	Message.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Message.BackgroundTransparency = 1.000
-	Message.ClipsDescendants = true
-	Message.Position = UDim2.new(0.318205535, 0, -0.0769230425, 0)
-	Message.Size = UDim2.new(0, 542, 0, 23)
-	Message.Font = Enum.Font.SourceSans
-	Message.Text = ""
-	Message.TextColor3 = Color3.fromRGB(255, 255, 255)
-	Message.TextSize = 21.000
-end
-
-function sendnotification(text)
-	game.CoreGui:WaitForChild("uwuware").Notification:TweenSize(UDim2.new(0, 1917,0, 26), "Out", "Linear", .2, true)
-	wait(.2)
-	for i = 1, #text do
-		game.CoreGui:WaitForChild("uwuware").Notification.Message.Text = string.sub(text, 1, i)
-		wait(.03)
-	end
-	wait(.2)
-	game.CoreGui:WaitForChild("uwuware").Notification.Message.Text = ""
-	game.CoreGui:WaitForChild("uwuware").Notification:TweenSize(UDim2.new(0, 1917,0, 0), "Out", "Linear", .2, true)
-end
-
-function checkwhitelist()
-	local whitelistecheck = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/ui-library-test/master/totally%20secure%20whitelist", true))()
-	if whitelistecheck[game:service('Players').LocalPlayer.UserId] then
-		sendnotification("Welcome "..game.Players.LocalPlayer.Name.." You Have Been Successfully Whitelisted")
-	else
-		game.Players.LocalPlayer:Kick("Oh no your not whitelisted dm me on discord; vect0rs#2851")
-	end
-end
-
-function uiwatermark()
-	local Frame = Instance.new("ImageLabel")
-	local UIListLayout = Instance.new("UIListLayout")
-	local Text = Instance.new("ImageLabel")
-	local Name = Instance.new("Frame")
-	local Icon = Instance.new("ImageLabel")
-
-	Frame.Name = "watermark"
-	Frame.Parent = game.CoreGui:WaitForChild("uwuware")
-	Frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Frame.BackgroundTransparency = 1.000
-	Frame.ClipsDescendants = true
-	Frame.Position = UDim2.new(-1, 0, 0.275999993, 0)
-	Frame.Size = UDim2.new(0, 189, 0, 204)
-	Frame.Image = "rbxassetid://3570695787"
-	Frame.ImageColor3 = Color3.fromRGB(35, 35, 35)
-	Frame.ScaleType = Enum.ScaleType.Slice
-	Frame.SliceCenter = Rect.new(100, 100, 100, 100)
-	Frame.SliceScale = 0.120
-
-	UIListLayout.Parent = Frame
-	UIListLayout.FillDirection = Enum.FillDirection.Horizontal
-
-	Text.Name = "Text"
-	Text.Parent = Frame
-	Text.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Text.BackgroundTransparency = 1.000
-	Text.Position = UDim2.new(0.394422323, 0, 0, 0)
-	Text.Size = UDim2.new(0, 304, 0, 204)
-	Text.Image = "http://www.roblox.com/asset/?id=5545516032"
-
-	Name.Name = "Name"
-	Name.Parent = Frame
-	Name.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Name.BackgroundTransparency = 1.000
-	Name.Size = UDim2.new(0, 176, 0, 204)
-
-	Icon.Name = "Icon"
-	Icon.Parent = Name
-	Icon.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-	Icon.BackgroundTransparency = 1.000
-	Icon.BorderSizePixel = 0
-	Icon.Position = UDim2.new(-0.326780885, 0, -0.322929174, 0)
-	Icon.Size = UDim2.new(0, 296, 0, 334)
-	Icon.Image = "http://www.roblox.com/asset/?id=5448429554"
-
-	local TweenService = game:GetService("TweenService")
-	local Object = game.CoreGui:WaitForChild("uwuware").watermark:WaitForChild("Name").Icon -- The object you want to tween.
-
-	local tweenInfo = TweenInfo.new(
-		1, -- The time the tween takes to complete
-		Enum.EasingStyle.Linear, -- The tween style.
-		Enum.EasingDirection.Out, -- EasingDirection
-		1, -- How many times you want the tween to repeat. If you make it less than 0 it will repeat forever.
-		false, -- Reverse?
-		0 -- Delay
-	)
-
-	local Tween = TweenService:Create(Object, tweenInfo, {Rotation = 360}) -- Creates the tween with the TweenInfo and what properties you want to change
-	Tween:Play() -- Plays the tween
-	game.CoreGui:WaitForChild("uwuware").watermark:TweenPosition(UDim2.new(0.308, 0,0.276, 0), "Out", "Linear", 2, true)
-	wait(2)
-	game.CoreGui:WaitForChild("uwuware").watermark:TweenSize(UDim2.new(0, 502,0, 204), "Out", "Linear", .5, true)
-
-	wait(4)
-	Tween:Play() -- Plays the tween
-	for i = 0, 1, .1 do
-		wait(0.03)
-			game.CoreGui:WaitForChild("uwuware").watermark.Text.ImageTransparency = i
-	end
-	for i = 0, .5, .1 do
-		wait(0.03)
-			game.CoreGui:WaitForChild("uwuware").watermark.ImageTransparency = i
-			game.CoreGui:WaitForChild("uwuware").watermark:WaitForChild("Name").Icon.ImageTransparency = i
-	end
-	game.CoreGui:WaitForChild("uwuware").watermark:TweenPosition(UDim2.new(0.902, 0,0.684, 0), "Out", "Linear", 2, true)
-	game.CoreGui:WaitForChild("uwuware").watermark:TweenSize(UDim2.new(0, 166,0, 192), "Out", "Linear", 2, true)
-end
-
-local splitline = Instance.new("Frame")
-function line()
-	splitline.Name = "Line"
-	splitline.Parent = game.CoreGui:WaitForChild("uwuware")
-	splitline.BackgroundColor3 = settings.LineColour
-	splitline.BorderSizePixel = 0
-	splitline.Size = UDim2.new(0, 1917, 0, 5)
-end
-
--- create options
-
-visuals:AddToggle({text = "Fullbright", state = false, callback = function(a) 
-    warn(a)
-    settings.fullbright = a
-	if settings.fullbright then
-		fullbright()
-		sendnotification("Fullbright Enabled")
-	else
-		fullbright()
-		sendnotification("Fullbright Disabled")
-	end
-end})
-
-local espoptions = visuals:AddFolder("ESP Options")
-espoptions:AddToggle({text = "ESP", state = false, callback = function(a) 
-	settings.ESPEnabled = a
-	if settings.ESPEnabled then
-	    warn("esp enabled")
-	        for _, v in next, Plrs:GetPlayers() do
-	                if v ~= MyPlr then
-	                    if settings.CharAddedEvent[v.Name] == nil then
-	                            settings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
-	                        if settings.ESPEnabled then
-	                            RemoveESP(v)
-	                            CreateESP(v)
-	                        end
-	                        repeat wait() until Char:FindFirstChild("HumanoidRootPart")
-	                        	TracerMT[v.Name] = Char.HumanoidRootPart
-	                        end)
-	                    end
-	                RemoveESP(v)
-	                CreateESP(v)
-	            end
-	        end
-			sendnotification("ESP Enabled")
-		else
-	        warn("esp disabled")
-	        PlayerESP:ClearAllChildren()
-	        ItemESP:ClearAllChildren()
-	    	sendnotification("ESP Disabled")
-	end
-end})
-
-espoptions:AddToggle({text = "Chams", state = false, callback = function(a)
-	settings.CHAMSEnabled = a
-	if settings.CHAMSEnabled then
-		warn("chams enabled")
-		for _, v in next, Plrs:GetPlayers() do
-			if v ~= MyPlr then
-				if settings.CharAddedEvent[v.Name] == nil then
-						settings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
-						if settings.CHAMSEnabled then
-							RemoveChams(v)
-							CreateChams(v)
-						end
-						repeat wait() until Char:FindFirstChild("HumanoidRootPart")
-						TracerMT[v.Name] = Char.HumanoidRootPart
-					end)
-				end
-				RemoveChams(v)
-				CreateChams(v)
-			end
-		end
-		sendnotification("Chams Enabled")
-		else
-		warn("chams disabled")
-		PlayerChams:ClearAllChildren()
-		ItemChams:ClearAllChildren()
-		sendnotification("Chams Disabled")
-	end
-end})
-
-espoptions:AddToggle({text = "Tracers", state = false, callback = function(a)
-	settings.TracersEnabled = a
-	if settings.TracersEnabled then
-		warn("tracers enabled")
-		for _, v in next, Plrs:GetPlayers() do
-			if v ~= MyPlr then
-				if settings.CharAddedEvent[v.Name] == nil then
-					settings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
-						if settings.TracersEnabled then
-							RemoveTracers(v)
-							CreateTracers(v)
-						end
-					end)
-				end
-				if v.Character ~= nil then
-				local Tor = v.Character:FindFirstChild("HumanoidRootPart")
-					if Tor then
-						TracerMT[v.Name] = Tor
-					end
-				end
-				RemoveTracers(v)
-				CreateTracers(v)
-			end
-		end
-		sendnotification("Tracers Enabled")
-		else
-		warn("tracers disabled")
-		for _, v in next, Plrs:GetPlayers() do
-			RemoveTracers(v)
-		end
-		sendnotification("Tracers Disabled")
-	end
-end})
-
-local espsettings = espoptions:AddFolder("ESP Settings")
-espsettings:AddColor({text = "Ally Color", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a) 
-	settings.Colors.Ally = a
-	if settings.ESPEnabled then
-		for _, v in next, Plrs:GetPlayers() do
-		    if v ~= MyPlr then
-		        if settings.CharAddedEvent[v.Name] == nil then
-		             settings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
-		                    repeat wait() until Char:FindFirstChild("HumanoidRootPart")
-		                    TracerMT[v.Name] = Char.HumanoidRootPart
-		                	end)
-		                end
-		        RemoveESP(v)
-		        CreateESP(v)
-		    end
-		end
-	else return end
-	if settings.CHAMSEnabled then
-		for _, v in next, Plrs:GetPlayers() do
-		    if v ~= MyPlr then
-		        if settings.CharAddedEvent[v.Name] == nil then
-		             settings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
-		                    repeat wait() until Char:FindFirstChild("HumanoidRootPart")
-		                    TracerMT[v.Name] = Char.HumanoidRootPart
-		                	end)
-		                end
-			    RemoveChams(v)
-				CreateChams(v)
-		    end
-		end
-	else return end
-end})
-
-character:AddToggle({text = "SuperSpeed", state = false, callback = function(a)
-	settings.superspeed = a
-	if settings.superspeed then
-		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 90
-		sendnotification("SuperSpeed Enabled")
-	else
-		game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 16
-		sendnotification("SuperSpeed Disabled")
-	end
-end})
-
-character:AddToggle({text = "SuperJump", state = false, callback = function(a)
-	settings.superjump = a
-	if settings.superjump then
-		game.Players.LocalPlayer.Character.Humanoid.JumpPower = 150
-		sendnotification("SuperJump Enabled")
-	else
-		game.Players.LocalPlayer.Character.Humanoid.JumpPower = 50
-		sendnotification("SuperJump Disabled")
-	end
-end})
-
-character:AddSlider({text = "WalkSpeed", value = 16, min = 0, max = 150, callback = function(a) 
-	game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = a
-end})
-
-character:AddSlider({text = "JumpPower", value = 50, min = 0, max = 500, callback = function(a) 
-	game.Players.LocalPlayer.Character.Humanoid.JumpPower = a
-end})
-
-character:AddToggle({text = "Fly", callback = function(a)
-	settings.vfly = a
-	if settings.vfly then
-		sFLY()
-		sendnotification("Fly Enabled")
-	else
-		NOFLY()
-		sendnotification("Fly Disabled")
-	end
-end})
-
-character:AddToggle({text = "Noclip", callback = function(a)
-	settings.noclip = a
-	if settings.noclip then
-		sendnotification("Noclip Enabled")
-	    local function NoclipLoop()
-	      	if game.Players.LocalPlayer.Character ~= nil then
-	          	for _, child in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
-		          if child:IsA("BasePart") and child.CanCollide == true then
-		              child.CanCollide = false
-	          		end
-	        	end
-	      	end
-	    end
-	    Noclipping = game:GetService('RunService').Stepped:connect(NoclipLoop)
-	  else
-		sendnotification("Noclip Disabled")
-	    if Noclipping then
-	      	Noclipping:Disconnect()
-	    end
-	end
-end})
-
-miscellaneous:AddToggle({text = "Low Gravity", state = false, callback = function(a)
-	settings.lowgravity = a
-	if settings.lowgravity then
-		workspace.Gravity = 60
-		sendnotification("Low Gravity Enabled")
-	else
-		workspace.Gravity = 196
-		sendnotification("Low Gravity Disabled")
-	end
-end})
-
-miscellaneous:AddSlider({text = "Gravity", value = 196, min = 0, max = 196, callback = function(a) 
-	workspace.Gravity = a
-end})
-
-miscellaneous:AddToggle({text = "AutoFarm", flag = "autofarm", callback = function(a)
-    library.flags["autofarm"] = a
-    if library.flags["autofarm"] then
-        sendnotification("AutoFarm Enabled")
-        while library.flags["autofarm"] do
+    });
+    main.vflyspeed = 1
+    main.vehicleflyspeed = 1
+    function main:Console(text)
+        hintmsg.Text = text
+    end
+    function main:SystemChat(txt)
+        sg:SetCore("ChatMakeSystemMessage",
+        {
+            Text = "Vect0rs; ".. txt,
+            Color = Color3.new(248, 118, 37),
+            Font = Enum.Font.Cartoon,
+            TextSize = 18
+        })
+        local msg = g.Chat:GetDescendants()
+        repeat
+            for i, v in next, msg do
+                if v:IsA("TextLabel") or v:IsA("TextButton") then
+                    if v.Text == "Vect0rs; ".. txt then
+                        msg = v
+                    end
+                end
+            end
+            Run.RenderStepped:wait()
+        until type(msg) ~= "table"
+        local chromaColor
+        local rainbowTime = 5
+        spawn(function()
+            while msg.Text == "Vect0rs; " .. txt do
+                wait()
+                chromaColor = Color3.fromHSV(tick() % rainbowTime / rainbowTime, 1, 1)
+                msg.TextColor3 = chromaColor
+            end
+            msg.TextColor3 = Color3.new(1, 1, 1)
+        end)
+    end
+    function main:BypassAnti()
+        if game.Players.LocalPlayer.PlayerScripts:FindFirstChild("Debounce") then
+            game.Players.LocalPlayer.PlayerScripts.Debounce:Destroy()
+        end
+    end
+    function main:vectorshub()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/ui-library-test/master/watermark", true))()
+        textbuttonthing = game.CoreGui.uwuware:WaitForChild("watermark").Text
+        textbuttonthing.MouseButton1Down:Connect(function()
+            library:Close()
+        end)
+        splitline.Name = "Line"
+        splitline.Parent = game.CoreGui:WaitForChild("uwuware")
+        splitline.BackgroundColor3 = Color3.fromRGB(221, 3, 255)
+        splitline.BorderSizePixel = 0
+        splitline.Size = UDim2.new(0, 1917, 0, 5)
+    end
+    function main:infothing()
+        if game.Players.LocalPlayer.UserId == 278723686 then
+            _G.role = "[dev]"
+            _G.username = "Vect0rs"
+        elseif game.Players.LocalPlayer.UserId == 425451555 then
+            _G.role = "[staff]"
+            _G.username = "Smail"
+        else
+            _G.role = "[member]"
+            _G.username = MyPlr.Name
+        end
+        loadstring(game:HttpGet("https://pastebin.com/raw/MH2ki4NT", true))()
+    end
+    function main:fullbright()
+        if library.flags.FullBright then
+            notification:sendnotification("FullBright Enabled")
+            local bloom = Instance.new("BloomEffect");
+            bloom.Enabled = true;
+            bloom.Intensity = 0.55;
+            bloom.Size = 30;
+            bloom.Threshold = 0.95;
+            bloom.Parent = game.Lighting;
+            local colorcorrection = Instance.new("ColorCorrectionEffect");
+            colorcorrection.Enabled = true;
+            colorcorrection.Brightness = 0;
+            colorcorrection.Contrast = 0;
+            colorcorrection.Saturation = 1;
+            colorcorrection.TintColor = Color3.fromRGB(255,255,255);
+            colorcorrection.Parent = game.Lighting;
+            local sunrays = Instance.new("SunRaysEffect");
+            sunrays.Enabled = true;
+            sunrays.Intensity = 0.4;
+            sunrays.Spread = 1;
+            sunrays.Parent = game.Lighting;
+        else
+            notification:sendnotification("FullBright Disabled")
+            for i,v in pairs(game.Lighting:GetChildren()) do
+                if v:IsA("BloomEffect") or v:IsA("ColorCorrectionEffect") or v:IsA("SunRaysEffect") then
+                    v:Destroy();
+                end
+            end
+        end
+    end
+    function main:GetSizeOfObject(Obj)
+        if Obj:IsA("BasePart") then
+            return Obj.Size
+        elseif Obj:IsA("Model") then
+            return Obj:GetExtentsSize()
+        end
+    end
+    function main:GetTeamColor(Plr)
+        if Plr == nil then return nil end
+        if not Plr:IsA("Player") then
+            return nil
+        end
+        local PickedColor = main.espsettings.Colors.Enemy
+        if Plr ~= nil then
+            if game.PlaceId == 606849621 then
+                if settings.Colors.ColorOverride == nil then
+                    if not settings.FreeForAll then
+                        if MyPlr.Team ~= nil and Plr.Team ~= nil then
+                            if settings.FriendList[Plr.Name] == nil then
+                                if MyPlr.Team.Name == "Prisoner" then
+                                    if Plr.Team == MyPlr.Team or Plr.Team.Name == "Criminal" then
+                                        PickedColor = settings.Colors.Ally
+                                    else
+                                        PickedColor = settings.Colors.Enemy
+                                    end
+                                elseif MyPlr.Team.Name == "Criminal" then
+                                    if Plr.Team == MyPlr.Team or Plr.Team.Name == "Prisoner" then
+                                        PickedColor = settings.Colors.Ally
+                                    else
+                                        PickedColor = settings.Colors.Enemy
+                                    end
+                                elseif MyPlr.Team.Name == "Police" then
+                                    if Plr.Team == MyPlr.Team then
+                                        PickedColor = settings.Colors.Ally
+                                    else
+                                        if Plr.Team.Name == "Criminal" then
+                                            PickedColor = settings.Colors.Enemy
+                                        elseif Plr.Team.Name == "Prisoner" then
+                                            PickedColor = settings.Colors.Neutral
+                                        end
+                                    end
+                                end
+                            else
+                                PickedColor = settings.Colors.Friend
+                            end
+                        end
+                    else
+                        if settings.FriendList[Plr.Name] ~= nil then
+                            PickedColor = settings.Colors.Friend
+                        else
+                            PickedColor = settings.Colors.Enemy
+                        end
+                    end
+                else
+                    PickedColor = settings.Colors.ColorOverride
+                end
+            elseif game.PlaceId == 155615604 then
+                if main.espsettings.Colors.ColorOverride == nil then
+                    if MyPlr.Team ~= nil and Plr.Team ~= nil then
+                        if main.espsettings.FriendList[Plr.Name] == nil then
+                            if MyPlr.Team.Name == "Inmates" then
+                                if Plr.Team.Name == "Inmates" then
+                                    PickedColor = main.espsettings.Colors.Ally
+                                elseif Plr.Team.Name == "Guards" or Plr.Team.Name == "Criminals" then
+                                    PickedColor = main.espsettings.Colors.Enemy
+                                else
+                                    PickedColor = main.espsettings.Colors.Neutral
+                                end
+                            elseif MyPlr.Team.Name == "Guards" then
+                                if Plr.Team.Name == "Inmates" then
+                                    PickedColor = main.espsettings.Colors.Neutral
+                                elseif Plr.Team.Name == "Criminals" then
+                                    PickedColor = main.espsettings.Colors.Enemy
+                                elseif Plr.Team.Name == "Guards" then
+                                    PickedColor = main.espsettings.Colors.Ally
+                                end
+                            elseif MyPlr.Team.Name == "Criminals" then
+                                if Plr.Team.Name == "Inmates" then
+                                    PickedColor = main.espsettings.Colors.Ally
+                                elseif Plr.Team.Name == "Guards" then
+                                    PickedColor = main.espsettings.Colors.Enemy
+                                else
+                                    PickedColor = main.espsettings.Colors.Neutral
+                                end
+                            end
+                        else
+                            PickedColor = main.espsettings.Colors.Friend
+                        end
+                    end
+                else
+                    PickedColor = main.espsettings.Colors.ColorOverride
+                end
+            elseif game.PlaceId == 746820961 then
+                if main.espsettings.Colors.ColorOverride == nil then
+                    if MyPlr:FindFirstChild("TeamC") and Plr:FindFirstChild("TeamC") then
+                        if Plr.TeamC.Value == MyPlr.TeamC.Value then
+                            PickedColor = main.espsettings.Colors.Ally
+                        else
+                            PickedColor = main.espsettings.Colors.Enemy
+                        end
+                    end
+                else
+                    PickedColor = main.espsettings.Colors.ColorOverride
+                end
+            elseif game.PlaceId == 1382113806 then
+                if main.espsettings.Colors.ColorOverride == nil then
+                    if MyPlr:FindFirstChild("role") and Plr:FindFirstChild("role") then
+                        if MyPlr.role.Value == "assassin" then
+                            if Plr.role.Value == "target" then
+                                PickedColor = main.espsettings.Colors.Enemy
+                            elseif Plr.role.Value == "guard" then
+                                PickedColor = Color3.new(1, 135 / 255, 0)
+                            else
+                                PickedColor = main.espsettings.Colors.Neutral
+                            end
+                        elseif MyPlr.role.Value == "target" then
+                            if Plr.role.Value == "guard" then
+                                PickedColor = main.espsettings.Colors.Ally
+                            elseif Plr.role.Value == "assassin" then
+                                PickedColor = main.espsettings.Colors.Enemy
+                            else
+                                PickedColor = main.espsettings.Colors.Neutral
+                            end
+                        elseif MyPlr.role.Value == "guard" then
+                            if Plr.role.Value == "target" then
+                                PickedColor = main.espsettings.Colors.Friend
+                            elseif Plr.role.Value == "guard" then
+                                PickedColor = main.espsettings.Colors.Ally
+                            elseif Plr.role.Value == "assassin" then
+                                PickedColor = main.espsettings.Colors.Enemy
+                            else
+                                PickedColor = main.espsettings.Colors.Neutral
+                            end
+                        else
+                            if MyPlr.role.Value == "none" then
+                                PickedColor = main.espsettings.Colors.Neutral
+                            end
+                        end
+                    end
+                else
+                    PickedColor = main.espsettings.Colors.ColorOverride
+                end
+            elseif game.PlaceId == 1072809192 then
+                if MyPlr:FindFirstChild("Backpack") and Plr:FindFirstChild("Backpack") then
+                    if MyPlr.Backpack:FindFirstChild("Knife") or MyChar:FindFirstChild("Knife") then
+                        if Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        else
+                            PickedColor = Color3.new(1, 135 / 255, 0)
+                        end
+                    elseif MyPlr.Backpack:FindFirstChild("Revolver") or MyChar:FindFirstChild("Revolver") then
+                        if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        elseif Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        else
+                            PickedColor = main.espsettings.Colors.Ally
+                        end
+                    else
+                        if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        elseif Plr.Backpack:FindFirstChild("Revolver") or Plr.Character:FindFirstChild("Revolver") then
+                            PickedColor = main.espsettings.Colors.Ally
+                        else
+                            PickedColor = main.espsettings.Colors.Neutral
+                        end
+                    end
+                end
+            elseif game.PlaceId == 142823291 or game.PlaceId == 1122507250 then
+                if MyPlr:FindFirstChild("Backpack") and Plr:FindFirstChild("Backpack") then
+                    if MyPlr.Backpack:FindFirstChild("Knife") or MyChar:FindFirstChild("Knife") then
+                        if (Plr.Backpack:FindFirstChild("Gun") or Plr.Backpack:FindFirstChild("Revolver")) or (Plr.Character:FindFirstChild("Gun") or Plr.Character:FindFirstChild("Revolver")) then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        else
+                            PickedColor = Color3.new(1, 135 / 255, 0)
+                        end
+                    elseif (MyPlr.Backpack:FindFirstChild("Gun") or MyPlr.Backpack:FindFirstChild("Revolver")) or (MyChar:FindFirstChild("Gun") or MyChar:FindFirstChild("Revolver")) then
+                        if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        else
+                            PickedColor = main.espsettings.Colors.Ally
+                        end
+                    else
+                        if Plr.Backpack:FindFirstChild("Knife") or Plr.Character:FindFirstChild("Knife") then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        elseif (Plr.Backpack:FindFirstChild("Gun") or Plr.Backpack:FindFirstChild("Revolver")) or (Plr.Character:FindFirstChild("Gun") or Plr.Character:FindFirstChild("Revolver")) then
+                            PickedColor = main.espsettings.Colors.Ally
+                        else
+                            PickedColor = main.espsettings.Colors.Neutral
+                        end
+                    end
+                end
+            elseif game.PlaceId == 379614936 then
+                if main.espsettings.Colors.ColorOverride == nil then
+                    if not main.espsettings.FriendList[Plr.Name] then
+                        local targ = MyPlr:FindFirstChild("PlayerGui"):FindFirstChild("ScreenGui"):FindFirstChild("UI"):FindFirstChild("Target"):FindFirstChild("Img"):FindFirstChild("PlayerText")
+                        if targ then
+                            if Plr.Name:lower() == targ.Text:lower() then
+                                PickedColor = main.espsettings.Colors.Enemy
+                            else
+                                PickedColor = main.espsettings.Colors.Neutral
+                            end
+                        else
+                            PickedColor = main.espsettings.Colors.Neutral
+                        end
+                    else
+                        PickedColor = main.espsettings.Colors.Friend
+                    end
+                else
+                    PickedColor = main.espsettings.Colors.ColorOverride
+                end
+            elseif game.PlaceId == 983224898 then
+                if (tick() - wildrevolvertick) > 10 or wildrevolverteamdata == nil then
+                    wildrevolverteamdata = RepStor.Functions.RequestGameData:InvokeServer()
+                    wildrevolvertick = tick()
+                    return main.espsettings.Colors.Neutral
+                end
+                local succ = pcall(function()
+                    if wildrevolverteamdata[Plr.Name] ~= nil then
+                        if main.espsettings.Colors.ColorOverride == nil then
+                            if not main.espsettings.FriendList[Plr.Name] then
+                                if wildrevolverteamdata[Plr.Name]["TeamName"] == wildrevolverteamdata[MyPlr.Name]["TeamName"] then
+                                    PickedColor = main.espsettings.Colors.Ally
+                                else
+                                    PickedColor = main.espsettings.Colors.Enemy
+                                end
+                            else
+                                PickedColor = main.espsettings.Colors.Friend
+                            end
+                        else
+                            PickedColor = main.espsettings.Colors.ColorOverride
+                        end
+                    else
+                        PickedColor = main.espsettings.Colors.Neutral
+                    end
+                end)
+                if not succ then
+                    wildrevolverteamdata = RepStor.Functions.RequestGameData:InvokeServer()
+                    wildrevolvertick = tick()
+                    return main.espsettings.Colors.Neutral
+                end
+            else
+                if main.espsettings.Colors.ColorOverride == nil then
+                    if not main.espsettings.FreeForAll then
+                        if MyPlr.Team ~= Plr.Team and not main.espsettings.FriendList[Plr.Name] then
+                            PickedColor = main.espsettings.Colors.Enemy
+                        elseif MyPlr.Team == Plr.Team and not main.espsettings.FriendList[Plr.Name] then
+                            PickedColor = main.espsettings.Colors.Ally
+                        else
+                            PickedColor = main.espsettings.Colors.Friend
+                        end
+                    else
+                        if main.espsettings.FriendList[Plr.Name] ~= nil then
+                            PickedColor = main.espsettings.Colors.Friend
+                        else
+                            PickedColor = main.espsettings.Colors.Enemy
+                        end
+                    end
+                else
+                    PickedColor = main.espsettings.Colors.ColorOverride
+                end
+            end
+        end
+        return PickedColor
+    end
+    function main:CreateESP(Obj)
+        if Obj ~= nil then
+            local IsPlr = Obj:IsA("Player")
+            local UseFolder = main.ItemESP
+            local GetChar = ((IsPlr) and Obj.Character) or Obj
+            local Head = GetChar:FindFirstChild("Head")
+            local t = tick()
+            if IsPlr then UseFolder = main.PlayerESP end
+            if Head == nil then
+                repeat
+                    Head = GetChar:FindFirstChild("Head")
+                    wait()
+                until Head ~= nil or (tick() - t) >= 10
+            end
+            if Head == nil then return end
+            
+            local bb = Instance.new("BillboardGui")
+            bb.Adornee = Head
+            bb.ExtentsOffset = Vector3.new(0, 1, 0)
+            bb.AlwaysOnTop = true
+            bb.Size = UDim2.new(0, 5, 0, 5)
+            bb.StudsOffset = Vector3.new(0, 3, 0)
+            bb.Name = "ESP Crap_" .. Obj.Name
+            bb.Parent = UseFolder
+            
+            local frame = Instance.new("Frame", bb)
+            frame.ZIndex = 10
+            frame.BackgroundTransparency = 1
+            frame.Size = UDim2.new(1, 0, 1, 0)
+            
+            local TxtName = Instance.new("TextLabel", frame)
+            TxtName.Name = "Names"
+            TxtName.ZIndex = 10
+            TxtName.Text = Obj.Name
+            TxtName.BackgroundTransparency = 1
+            TxtName.Position = UDim2.new(0, 0, 0, -45)
+            TxtName.Size = UDim2.new(1, 0, 10, 0)
+            TxtName.Font = "SourceSansBold"
+            TxtName.TextSize = 13
+            TxtName.TextStrokeTransparency = 0.5
+  
+            local TxtDist = nil
+            local TxtHealth = nil
+            if IsPlr then
+                TxtDist = Instance.new("TextLabel", frame)
+                TxtDist.Name = "Dist"
+                TxtDist.ZIndex = 10
+                TxtDist.Text = ""
+                TxtDist.BackgroundTransparency = 1
+                TxtDist.Position = UDim2.new(0, 0, 0, -35)
+                TxtDist.Size = UDim2.new(1, 0, 10, 0)
+                TxtDist.Font = "SourceSansBold"
+                TxtDist.TextSize = 13
+                TxtDist.TextStrokeTransparency = 0.5
+  
+                TxtHealth = Instance.new("TextLabel", frame)
+                TxtHealth.Name = "Health"
+                TxtHealth.ZIndex = 10
+                TxtHealth.Text = ""
+                TxtHealth.BackgroundTransparency = 1
+                TxtHealth.Position = UDim2.new(0, 0, 0, -25)
+                TxtHealth.Size = UDim2.new(1, 0, 10, 0)
+                TxtHealth.Font = "SourceSansBold"
+                TxtHealth.TextSize = 13
+                TxtHealth.TextStrokeTransparency = 0.5
+            else
+                local ObjVal = Instance.new("ObjectValue", bb)
+                ObjVal.Value = Obj
+            end
+            
+            local PickColor = main:GetTeamColor(Obj) or main.espsettings.Colors.Neutral
+            TxtName.TextColor3 = PickColor
+  
+            if IsPlr then
+                TxtDist.TextColor3 = PickColor
+                TxtHealth.TextColor3 = PickColor
+            end
+        end
+    end
+    function main:RemoveESP(Obj)
+        if Obj ~= nil then
+            local IsPlr = Obj:IsA("Player")
+            local UseFolder = main.ItemESP
+            if IsPlr then UseFolder = main.PlayerESP end
+            local FindESP = ((IsPlr) and UseFolder:FindFirstChild("ESP Crap_" .. Obj.Name)) or main:FindESP(Obj)
+            if FindESP then
+                FindESP:Destroy()
+            end
+        end
+    end
+    function main:UpdateESP(Plr)
+        if Plr ~= nil then
+            local Find = main.PlayerESP:FindFirstChild("ESP Crap_" .. Plr.Name)
+            if Find then
+                local PickColor = main:GetTeamColor(Plr)
+                Find.Frame.Names.TextColor3 = PickColor
+                Find.Frame.Dist.TextColor3 = PickColor
+                Find.Frame.Health.TextColor3 = PickColor
+                --Find.Frame.Pos.TextColor3 = PickColor
+                local GetChar = Plr.Character
+                if MyChar and GetChar then
+                    local Find2 = MyChar:FindFirstChild("HumanoidRootPart")
+                    local Find3 = GetChar:FindFirstChild("HumanoidRootPart")
+                    local Find4 = GetChar:FindFirstChildOfClass("Humanoid")
+                    if Find2 and Find3 then
+                        local pos = Find3.Position
+                        local Dist = (Find2.Position - pos).magnitude
+                        if Dist > main.espsettings.ESPLength or main.espsettings.Blacklist[Plr.Name] then
+                            Find.Frame.Names.Visible = false
+                            Find.Frame.Dist.Visible = false
+                            Find.Frame.Health.Visible = false
+                            return
+                        else
+                            Find.Frame.Names.Visible = true
+                            Find.Frame.Dist.Visible = true
+                            Find.Frame.Health.Visible = true
+                        end
+                        Find.Frame.Dist.Text = "Distance: " .. string.format("%.0f", Dist)
+                        --Find.Frame.Pos.Text = "(X: " .. string.format("%.0f", pos.X) .. ", Y: " .. string.format("%.0f", pos.Y) .. ", Z: " .. string.format("%.0f", pos.Z) .. ")"
+                        if Find4 then
+                            Find.Frame.Health.Text = "Health: " .. string.format("%.0f", Find4.Health)
+                        else
+                            Find.Frame.Health.Text = ""
+                        end
+                    end
+                end
+            end
+        end
+    end
+    function main:FindESP(Obj)
+        for i, v in next, main.ItemESP:GetChildren() do
+            if v.className == "ObjectValue" then
+                if v.Value == Obj then
+                    return v.Parent
+                end
+            end
+        end
+        return nil
+    end
+    function main:FindCham(Obj)
+        for i, v in next, main.ItemChams:GetChildren() do
+            if v.className == "ObjectValue" then
+                if v.Value == Obj then
+                    return v.Parent
+                end
+            end
+        end
+        return nil
+    end
+    function main:UpdateChams(Obj)
+        if Obj == nil then return end
+
+        if Obj:IsA("Player") then
+            local Find = PlayerChams:FindFirstChild(Obj.Name)
+            local GetChar = Obj.Character
+  
+            local Trans = 0
+            if GetChar and MyChar then
+                local GetHead = GetChar:FindFirstChild("Head")
+                local GetTor = GetChar:FindFirstChild("HumanoidRootPart")
+                local MyHead = MyChar:FindFirstChild("Head")
+                local MyTor = MyChar:FindFirstChild("HumanoidRootPart")
+                if GetHead and GetTor and MyHead and MyTor then
+                    if (MyTor.Position - GetTor.Position).magnitude > settings.CHAMSLength or settings.Blacklist[Obj.Name] then
+                        Trans = 1
+                    else
+                        --local MyCharStuff = MyChar:GetDescendants()
+                        local Ray = Ray.new(MyCam.CFrame.p, (GetTor.Position - MyCam.CFrame.p).unit * 2048)
+                        local part = workspace:FindPartOnRayWithIgnoreList(Ray, {MyChar})
+                        if part ~= nil then
+                            if part:IsDescendantOf(GetChar) then
+                                Trans = 0.9
+                            else
+                                Trans = 0
+                            end
+                        end
+                    end
+                end
+            end
+  
+            if Find then
+                for i, v in next, Find:GetChildren() do
+                    if v.className ~= "ObjectValue" then
+                        v.Color3 = main.GetTeamColor(Obj) or main.espsettings.Colors.Neutral
+                        v.Transparency = Trans
+                    end
+                end
+            end
+        end
+    end
+    function main:RemoveChams(Obj)
+        if Obj ~= nil then
+            local IsPlr = Obj:IsA("Player")
+            local UseFolder = main.ItemChams
+            if IsPlr then UseFolder = main.PlayerChams end
+            local FindC = UseFolder:FindFirstChild(tostring(Obj)) or main:FindCham(Obj)
+            if FindC then
+                FindC:Destroy()
+            end
+        end
+    end
+    function main:CreateChams(Obj)
+        if Obj ~= nil then
+            local IsPlr = Obj:IsA("Player")
+            local UseFolder = main.ItemChams
+            local Crap = nil
+            local GetTor = nil
+            local t = tick()
+            if IsPlr then
+                Obj = Obj.Character
+                UseFolder = main.PlayerChams
+            end
+            if Obj == nil then return end
+            GetTor = Obj:FindFirstChild("HumanoidRootPart") or Obj:WaitForChild("HumanoidRootPart")
+            if IsPlr then Crap = Obj:GetChildren() else Crap = Obj:GetDescendants() end
+  
+            local FindC = ((IsPlr) and UseFolder:FindFirstChild(Obj.Name)) or main:FindCham(Obj)
+            if not FindC then
+                FindC = Instance.new("Folder", UseFolder)
+                FindC.Name = Obj.Name
+                local ObjVal = Instance.new("ObjectValue", FindC)
+                ObjVal.Value = Obj
+            end
+  
+            for _, P in next, Crap do
+                if P:IsA("PVInstance") and P.Name ~= "HumanoidRootPart" then
+                    local Box = Instance.new("BoxHandleAdornment")
+                    Box.Size = main:GetSizeOfObject(P)
+                    Box.Name = "Cham"
+                    Box.Adornee = P
+                    Box.AlwaysOnTop = true
+                    Box.ZIndex = 5
+                    Box.Transparency = 0
+                    Box.Color3 = ((IsPlr) and main:GetTeamColor(Plrs:GetPlayerFromCharacter(Obj))) or main.espsettings.Colors.Neutral
+                    Box.Parent = FindC
+                end
+            end
+        end
+    end
+    function main:UpdateTracer(Plr)
+        if library.flags.TracersTog then
+            if MyChar then
+                local MyTor = MyChar:FindFirstChild("HumanoidRootPart")
+                local GetTor = main.TracerData[Plr.Name]
+                if MyTor and GetTor ~= nil and GetTor.Parent ~= nil then
+                    local Dist = (MyTor.Position - GetTor.Position).magnitude
+                    if (Dist < main.espsettings.TracersLength and not main.espsettings.Blacklist[Plr.Name]) and not (MyChar:FindFirstChild("InVehicle") or GetTor.Parent:FindFirstChild("InVehicle")) then
+                        if not main.espsettings.PlaceTracersUnderCharacter then
+                            local R = MyCam:ScreenPointToRay(MyCam.ViewportSize.X / 2, MyCam.ViewportSize.Y, 0)
+                            Dist = (R.Origin - (GetTor.Position - Vector3.new(0, 3, 0))).magnitude
+                            main.Tracers[Plr.Name].Transparency = 1
+                            main.Tracers[Plr.Name].Size = Vector3.new(0.05, 0.05, Dist)
+                            main.Tracers[Plr.Name].CFrame = CFrame.new(R.Origin, (GetTor.Position - Vector3.new(0, 4.5, 0))) * CFrame.new(0, 0, -Dist / 2)
+                            main.Tracers[Plr.Name].BrickColor = BrickColor.new(main:GetTeamColor(Plr))
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Transparency = 0
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Size = Vector3.new(0.001, 0.001, Dist)
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Color3 = main:GetTeamColor(Plr)
+                        else
+                            Dist = (MyTor.Position - (GetTor.Position - Vector3.new(0, 3, 0))).magnitude
+                            main.Tracers[Plr.Name].Transparency = 1
+                            main.Tracers[Plr.Name].Size = Vector3.new(0.3, 0.3, Dist)
+                            main.Tracers[Plr.Name].CFrame = CFrame.new(MyTor.Position - Vector3.new(0, 3, 0), (GetTor.Position - Vector3.new(0, 4.5, 0))) * CFrame.new(0, 0, -Dist / 2)
+                            main.Tracers[Plr.Name].BrickColor = BrickColor.new(main:GetTeamColor(Plr))
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Transparency = 0
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Size = Vector3.new(0.05, 0.05, Dist)
+                            main.Tracers[Plr.Name].BoxHandleAdornment.Color3 = main:GetTeamColor(Plr)
+                        end
+                    else
+                        main.Tracers[Plr.Name].Transparency = 1
+                        main.Tracers[Plr.Name].BoxHandleAdornment.Transparency = 1
+                    end
+                end
+            end
+        end
+    end
+    function main:RemoveTracers(Plr)
+        local Find = main.Tracers:FindFirstChild(Plr.Name)
+        if Find then
+            Find:Destroy()
+        end
+    end
+    function main:CreateTracers(Plr)
+        local Find = main.Tracers:FindFirstChild(Plr.Name)
+        if not Find then
+            local P = Instance.new("Part")
+            P.Name = Plr.Name
+            P.Material = "Neon"
+            P.Transparency = 1
+            P.Anchored = true
+            P.Locked = true
+            P.CanCollide = false
+            local B = Instance.new("BoxHandleAdornment", P)
+            B.Adornee = P
+            B.Size = main:GetSizeOfObject(P)
+            B.AlwaysOnTop = true
+            B.ZIndex = 5
+            B.Transparency = 0
+            B.Color3 = main:GetTeamColor(Plr) or main.espsettings.Colors.Neutral
+            P.Parent = main.Tracers
+  
+            coroutine.resume(coroutine.create(function()
+                while main.Tracers:FindFirstChild(Plr.Name) do
+                    main:UpdateTracer(Plr)
+                    Run.RenderStepped:wait()
+                end
+            end))
+        end
+    end
+    function main:updatecolors()
+        do
+            if library.flags["ESPTog"] then
+                for _, v in next, Plrs:GetPlayers() do
+                    if v ~= MyPlr then
+                        if main.espsettings.CharAddedEvent[v.Name] == nil then
+                            main.espsettings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
+                                    repeat wait() until Char:FindFirstChild("HumanoidRootPart")
+                                    main.TracerMT[v.Name] = Char.HumanoidRootPart
+                                    end)
+                                end
+                        main:RemoveESP(v)
+                        main:CreateESP(v)
+                    end
+                end
+            else return end
+            if library.flags["ChamsTog"] then
+                for _, v in next, Plrs:GetPlayers() do
+                    if v ~= MyPlr then
+                        if main.espsettings.CharAddedEvent[v.Name] == nil then
+                            main.espsettings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
+                                    repeat wait() until Char:FindFirstChild("HumanoidRootPart")
+                                    main.TracerMT[v.Name] = Char.HumanoidRootPart
+                                    end)
+                                end
+                        main:RemoveChams(v)
+                        main:CreateChams(v)
+                    end
+                end
+            else return end
+        end
+    end
+    function main:esptoggle()
+        if library.flags.ESPTog then
+            notification:sendnotification("ESP Enabled")
+            for _, v in next, Plrs:GetPlayers() do
+                    if v ~= MyPlr then
+                        if main.espsettings.CharAddedEvent[v.Name] == nil then
+                            main.espsettings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
+                            if library.flags.ESPTog then
+                                main:RemoveESP(v)
+                                main:CreateESP(v)
+                            end
+                            repeat wait() until Char:FindFirstChild("HumanoidRootPart")
+                                main.TracerMT[v.Name] = Char.HumanoidRootPart
+                            end)
+                        end
+                    main:RemoveESP(v)
+                    main:CreateESP(v)
+                end
+            end
+        else
+            main.PlayerESP:ClearAllChildren()
+            main.ItemESP:ClearAllChildren()
+            notification:sendnotification("ESP Disabled")
+        end
+    end
+    function main:chamstoggle()
+        if library.flags.ChamsTog then
+            for _, v in next, Plrs:GetPlayers() do
+                if v ~= MyPlr then
+                    if main.espsettings.CharAddedEvent[v.Name] == nil then
+                        main.espsettings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
+                            if library.flags.ChamsTog then
+                                main:RemoveChams(v)
+                                main:CreateChams(v)
+                            end
+                            repeat wait() until Char:FindFirstChild("HumanoidRootPart")
+                            main.TracerMT[v.Name] = Char.HumanoidRootPart
+                        end)
+                    end
+                    main:RemoveChams(v)
+                    main:CreateChams(v)
+                end
+            end
+            notification:sendnotification("Chams Enabled")
+            else
+            main.PlayerChams:ClearAllChildren()
+            main.ItemChams:ClearAllChildren()
+            notification:sendnotification("Chams Disabled")
+        end
+    end
+    function main:tracerstoggle()
+        if library.flags["TracersTog"] then
+            warn("tracers enabled")
+            for _, v in next, Plrs:GetPlayers() do
+                if v ~= MyPlr then
+                    if main.espsettings.CharAddedEvent[v.Name] == nil then
+                        main.espsettings.CharAddedEvent[v.Name] = v.CharacterAdded:connect(function(Char)
+                            if library.flags["TracersTog"] then
+                                main:RemoveTracers(v)
+                                main:CreateTracers(v)
+                            end
+                        end)
+                    end
+                    if v.Character ~= nil then
+                    local Tor = v.Character:FindFirstChild("HumanoidRootPart")
+                        if Tor then
+                            main.TracerMT[v.Name] = Tor
+                        end
+                    end
+                    main:RemoveTracers(v)
+                    main:CreateTracers(v)
+                end
+            end
+            notification:sendnotification("Tracers Enabled")
+            else
+            warn("tracers disabled")
+            for _, v in next, Plrs:GetPlayers() do
+                main:RemoveTracers(v)
+            end
+            notification:sendnotification("Tracers Disabled")
+        end
+    end
+    function main:superspeed()
+        if library.flags.SuperSpeed then
+            MyChar.Humanoid.WalkSpeed = 90
+            notification:sendnotification("SuperSpeed Enabled")
+        else
+            MyChar.Humanoid.WalkSpeed = 16
+            notification:sendnotification("SuperSpeed Disabled")
+        end
+    end
+    function main:superjump()
+        if library.flags.SuperJump then
+            MyChar.Humanoid.JumpPower = 150
+            notification:sendnotification("SuperJump Enabled")
+        else
+            MyChar.Humanoid.JumpPower = 50
+            notification:sendnotification("SuperJump Disabled")
+        end
+    end
+    function main:walkspeed(value)
+        MyChar.Humanoid.WalkSpeed = value
+    end
+    function main:jumppower(value)
+        MyChar.Humanoid.JumpPower = value
+    end
+    function main:flyenable(vfly)
+        repeat wait() until game.Players.LocalPlayer and game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild('HumanoidRootPart') and game.Players.LocalPlayer.Character:FindFirstChild('Humanoid')
+        repeat wait() until mouse
+  
+        local T = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+        local lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+        local SPEED = 0
+  
+        local function FLY()
+            library.flags["flytog"] = true
+            local BG = Instance.new('BodyGyro', T)
+            local BV = Instance.new('BodyVelocity', T)
+            BG.P = 9e4
+            BG.maxTorque = Vector3.new(9e9, 9e9, 9e9)
+            BG.cframe = T.CFrame
+            BV.velocity = Vector3.new(0, 0, 0)
+            BV.maxForce = Vector3.new(9e9, 9e9, 9e9)
+            spawn(function()
+                repeat wait()
+                if not vfly then
+                    game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = true
+                end
+                if CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0 then
+                    SPEED = 50
+                elseif not (CONTROL.L + CONTROL.R ~= 0 or CONTROL.F + CONTROL.B ~= 0 or CONTROL.Q + CONTROL.E ~= 0) and SPEED ~= 0 then
+                    SPEED = 0
+                end
+                if (CONTROL.L + CONTROL.R) ~= 0 or (CONTROL.F + CONTROL.B) ~= 0 or (CONTROL.Q + CONTROL.E) ~= 0 then
+                    BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (CONTROL.F + CONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(CONTROL.L + CONTROL.R, (CONTROL.F + CONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+                    lCONTROL = {F = CONTROL.F, B = CONTROL.B, L = CONTROL.L, R = CONTROL.R}
+                elseif (CONTROL.L + CONTROL.R) == 0 and (CONTROL.F + CONTROL.B) == 0 and (CONTROL.Q + CONTROL.E) == 0 and SPEED ~= 0 then
+                    BV.velocity = ((workspace.CurrentCamera.CoordinateFrame.lookVector * (lCONTROL.F + lCONTROL.B)) + ((workspace.CurrentCamera.CoordinateFrame * CFrame.new(lCONTROL.L + lCONTROL.R, (lCONTROL.F + lCONTROL.B + CONTROL.Q + CONTROL.E) * 0.2, 0).p) - workspace.CurrentCamera.CoordinateFrame.p)) * SPEED
+                else
+                    BV.velocity = Vector3.new(0, 0, 0)
+                end
+                BG.cframe = workspace.CurrentCamera.CoordinateFrame
+                until not library.flags["flytog"]
+                CONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+                lCONTROL = {F = 0, B = 0, L = 0, R = 0, Q = 0, E = 0}
+                SPEED = 0
+                BG:destroy()
+                BV:destroy()
+                game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false
+            end)
+        end
+        mouse.KeyDown:connect(function(KEY)
+            if KEY:lower() == 'w' then
+                if vfly then
+                    CONTROL.F = main.vehicleflyspeed
+                else
+                    CONTROL.F = main.vflyspeed
+                end
+            elseif KEY:lower() == 's' then
+                if vfly then
+                    CONTROL.B = - main.vehicleflyspeed
+                else
+                    CONTROL.B = - main.vflyspeed
+                end
+            elseif KEY:lower() == 'a' then
+                if vfly then
+                    CONTROL.L = - main.vehicleflyspeed
+                else
+                    CONTROL.L = - main.vflyspeed
+                end
+            elseif KEY:lower() == 'd' then
+                if vfly then
+                    CONTROL.R = main.vehicleflyspeed
+                else
+                    CONTROL.R = main.vflyspeed
+                end
+            elseif KEY:lower() == 'e' then
+                if vfly then
+                    CONTROL.Q = main.vehicleflyspeed*2
+                else
+                    CONTROL.Q = main.vflyspeed*2
+                end
+            elseif KEY:lower() == 'q' then
+                if vfly then
+                    CONTROL.E = -main.vehicleflyspeed*2
+                else
+                    CONTROL.E = -main.vflyspeed*2
+                end
+            end
+        end)
+        mouse.KeyUp:connect(function(KEY)
+            if KEY:lower() == 'w' then
+                CONTROL.F = 0
+            elseif KEY:lower() == 's' then
+                CONTROL.B = 0
+            elseif KEY:lower() == 'a' then
+                CONTROL.L = 0
+            elseif KEY:lower() == 'd' then
+                CONTROL.R = 0
+            elseif KEY:lower() == 'e' then
+                CONTROL.Q = 0
+            elseif KEY:lower() == 'q' then
+                CONTROL.E = 0
+            end
+        end)
+        FLY()
+    end
+    function main:flydisable()
+        library.flags["flytog"] = false
+        game.Players.LocalPlayer.Character:FindFirstChildOfClass('Humanoid').PlatformStand = false  
+    end
+    function main:flytoggle()
+        if library.flags["flytog"] then
+            main:flyenable()
+            notification:sendnotification("Fly Enabled")
+        else
+            main:flydisable()
+            notification:sendnotification("Fly Disabled")
+        end
+    end
+    function main:vehicleflytoggle()
+        if library.flags["vflytog"] then
+            main:flyenable(true)
+            notification:sendnotification("Vehicle Fly Enabled")
+        else
+            main:flydisable()
+            notification:sendnotification("Vehicle Fly Disabled")
+        end
+    end
+    function main:lowgravity()
+        if library.flags["lowgrav"] then
+            workspace.Gravity = 50
+            notification:sendnotification("Low Gravity Enabled")
+        else
+            workspace.Gravity = 196
+            notification:sendnotification("Low Gravity Disabled")
+        end
+    end
+    function main:gravity(val)
+        workspace.Gravity = val
+    end
+    function main:autofarm()
+        if library.flags["autofarm"] then
+            loopfunctions:RunLoop("AutoFarm")
+            notification:sendnotification("AutoFarm Enabled")
+        else
+            loopfunctions:StopLoop("AutoFarm")
+            notification:sendnotification("AutoFarm Disabled")
+        end
+    end
+    function main:megatap()
+        if library.flags["megatap"] then
+            loopfunctions:RunLoop("Mega Tap")
+            notification:sendnotification("Auto Mega Tap Enabled")
+        else
+            loopfunctions:StopLoop("Mega Tap")
+            notification:sendnotification("Auto Mega Tap Disabled")
+        end
+    end
+    function main:autospinwheel()
+        if library.flags["autospinwheel"] then
+            loopfunctions:RunLoop("Auto Spin Wheel")
+            notification:sendnotification("Auto Spin Wheel Enabled")
+        else
+            loopfunctions:StopLoop("Auto Spin Wheel")
+            notification:sendnotification("Auto Spin Wheel Disabled")
+        end
+    end
+    function main:autorebirth()
+        if library.flags["autorebirthtog"] then
+            loopfunctions:RunLoop("Auto Rebirth")
+            notification:sendnotification("Auto Rebirth Enabled")
+        else
+            loopfunctions:StopLoop("Auto Rebirth")
+            notification:sendnotification("Auto Rebirth Disabled")
+        end
+    end
+    function main:superebirth()
+        if library.flags["superrebirthtog"] then
+            loopfunctions:RunLoop("Auto Super Rebirth")
+            notification:sendnotification("Auto Super Rebirth Enabled")
+        else
+            loopfunctions:StopLoop("Auto Super Rebirth")
+            notification:sendnotification("Auto Super Rebirth Disabled")
+        end
+    end
+    function main:AutoBuyPotions()
+        if library.flags["autobuypotionstog"] then
+            loopfunctions:RunLoop("Auto Buy Potions")
+            notification:sendnotification("Auto Buy Potions Enabled")
+        else
+            loopfunctions:StopLoop("Auto Buy Potions")
+            notification:sendnotification("Auto Buy Potions Disabled")
+        end
+    end
+    function main:AutoBuyUpgrades()
+        if library.flags["autobuyupgradestog"] then
+            loopfunctions:RunLoop("Auto Buy Upgrades")
+            notification:sendnotification("Auto Buy Upgrades Enabled")
+        else
+            loopfunctions:StopLoop("Auto Buy Upgrades")
+            notification:sendnotification("Auto Buy Upgrades Disabled")
+        end
+    end
+    function main:AutoCollectTapsReward()
+        if library.flags["autocollecttapsreward"] then
+            loopfunctions:RunLoop("Collect Taps Reward")
+            notification:sendnotification("Auto Collecting Taps Enabled")
+        else
+            loopfunctions:StopLoop("Collect Taps Reward")
+            notification:sendnotification("Auto Collecting Taps Disabled")
+        end
+    end
+    function main:AutoCollectGemsReward()
+        if library.flags["autocollectgemsreward"] then
+            loopfunctions:RunLoop("Collect Gems Reward")
+            notification:sendnotification("Auto Collecting Gems Enabled")
+        else
+            loopfunctions:StopLoop("Collect Gems Reward")
+            notification:sendnotification("Auto Collecting Gems Disabled")
+        end
+    end
+    function main:AutoCollectSRTokensReward()
+        if library.flags["autocollectsrtokensreward"] then
+            loopfunctions:RunLoop("Collect SRTokens Reward")
+            notification:sendnotification("Auto Collecting SRTokens Enabled")
+        else
+            loopfunctions:StopLoop("Collect SRTokens Reward")
+            notification:sendnotification("Auto Collecting SRTokens Disabled")
+        end
+    end
+    function main:AutoEquipBestPets()
+        if library.flags["autoequipbestpetstog"] then
+            loopfunctions:RunLoop("Auto Equip Best Pets")
+            notification:sendnotification("Auto Equip Best Pets Enabled")
+        else
+            loopfunctions:StopLoop("Auto Equip Best Pets")
+            notification:sendnotification("Auto Equip Best Pets Disabled")
+        end
+    end
+    function main:UpgradePets()
+        if library.flags["autoupgradepets"] then
+            loopfunctions:RunLoop("Auto Upgrade Pets")
+            notification:sendnotification("Auto Upgrade Pets Enabled")
+        else
+            loopfunctions:StopLoop("Auto Upgrade Pets")
+            notification:sendnotification("Auto Upgrade Pets Disabled")
+        end
+    end
+    function main:AutoOpenEgg()
+        if library.flags["autoopenegg"] then
+            loopfunctions:RunLoop("Auto Open Egg")
+            notification:sendnotification("Auto Open Egg Enabled")
+        else
+            loopfunctions:StopLoop("Auto Open Egg")
+            notification:sendnotification("Auto Open Egg Disabled")
+        end
+    end
+    function main:unlockkeys()
+        for i = 1,5 do
+            for i,keys in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
+                MyChar.HumanoidRootPart.CFrame = keys.CFrame
+                wait(.2)
+            end
             wait()
-            local args = {
-                [1] = false,
-            }
-            game:GetService("ReplicatedStorage").PlayerClick:FireServer(unpack(args))   
+            for i,keys in pairs(workspace.Teleporters.Keys:GetChildren()) do
+                MyChar.HumanoidRootPart.CFrame = keys.CFrame
+                wait(.2)
+            end
         end
-    else
-        sendnotification("AutoFarm Disabled")
     end
-end})
-
-miscellaneous:AddToggle({text = "Auto Upgrade Pets", flag = "autoupgradepets", callback = function(a)
-	library.flags["autoupgradepets"] = a
-	if library.flags["autoupgradepets"] then
-		sendnotification("Auto Upgrade Pets Enabled")
-		while library.flags["autoupgradepets"] do
-			wait()
-			game:GetService("ReplicatedStorage").MergeAllPets:InvokeServer()
-		end
-	else
-		sendnotification("Auto Upgrade Pets Disabled")
-	end
-end})
-
-miscellaneous:AddToggle({text = "Auto Equip Best Pets", flag = "autoequippets", callback = function(a)
-	library.flags["autoequippets"] = a
-	if library.flags["autoequippets"] then
-		sendnotification("Auto Equip Best Pets Enabled")
-		while library.flags["autoequippets"] do
-			wait()
-			game:GetService("ReplicatedStorage").EquipBestPets:InvokeServer()
-		end
-	else
-		sendnotification("Auto Equip Best Pets Disabled")
-	end
-end})
-
-miscellaneous:AddToggle({text = "Auto Collect Rewards", flag = "autocollectdailyreward", callback = function(a)
-	library.flags["autocollectdailyreward"] = a
-	if library.flags["autocollectdailyreward"] then
-		sendnotification("Auto Collect Daily Rewards Enabled")
-		while library.flags["autocollectdailyreward"] do
-			collectgemsreward()
-			collectsrtokenreward()
-			collecttapsreward()
-		end
-	else
-		sendnotification("Auto Collect Daily Rewards Disabled")
-	end
-end})
-
-for i,upgrades in pairs(workspace.Lib.IngameStore.Products.Upgrades:GetChildren()) do
-	table.insert(settings.upgrades, upgrades) 
-end
-
-miscellaneous:AddList({text = "Auto Buy Upgrade Options", flag = "autobuyupgradeoption", values = settings.upgrades, callback = function(a)
-	library.flags["autobuyupgradeoption"] = a
-end})
-
-miscellaneous:AddToggle({text = "Auto Buy Upgrades", flag = "autobuyupgrades", callback = function(a)
-	library.flags["autobuyupgrades"] = a
-	if library.flags["autobuyupgrades"] then
-		sendnotification("Auto Buy Upgrades Enabled")
-		while library.flags["autobuyupgrades"] do
-			wait(.5)
-			local args = {"Upgrades", library.flags["autobuyupgradeoption"]}
-			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Buy Upgrades Disabled")
-	end
-end})
-
-for i,potions in pairs(workspace.Lib.IngameStore.Products.Potions:GetChildren()) do
-	table.insert(settings.potions, potions) 
-end
-
-miscellaneous:AddList({text = "Auto Buy Potion Options", flag = "autobuypotionoption", values = settings.potions, callback = function(a)
-	library.flags["autobuypotionoption"] = a
-end})
-
-miscellaneous:AddToggle({text = "Auto Buy Potions", flag = "autobuypotions", callback = function(a)
-	library.flags["autobuypotions"] = a
-	if library.flags["autobuypotions"] then
-		sendnotification("Auto Buy Potions Enabled")
-		while library.flags["autobuypotions"] do
-			wait(.5)
-			local args = {"Potions", library.flags["autobuypotionoption"]}
-			game:GetService("ReplicatedStorage").IngameStoreBuyProduct:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Buy Potions Disabled")
-	end
-end})
-
-miscellaneous:AddSlider({text = "Amount", flag = "autoopenamount", value = 1, min = 1, max = 3, callback = function(a)
-    library.flags["autoopenamount"] = a
-end})
-
-for i,egg in pairs(workspace.Lib.PetShops.PetShopSettings:GetChildren()) do
-	table.insert(settings.eggs, egg) -- add the light
-end
-
-miscellaneous:AddList({text = "Eggs", values = settings.eggs, callback = function(a)
-	settings.chosenegg = a
-end})
-
-miscellaneous:AddToggle({text = "Auto Open Egg", flag = "autoopenegg", callback = function(a)
-	library.flags["autoopenegg"] = a
-	if library.flags["autoopenegg"] then
-		while library.flags["autoopenegg"] do
-			wait()
-			local args = {
-				[1] = settings.chosenegg,
-				[2] = tonumber(library.flags["autoopenamount"]),
-			}
-			game:GetService("ReplicatedStorage").PetStoreRoll:InvokeServer(unpack(args))
-		end
-	end
-end})
-
-miscellaneous:AddToggle({text = "Auto Mega Tap", flag = "autotapsploshion", callback = function(a)
-    library.flags["autotapsploshion"] = a
-    if library.flags["autotapsploshion"] then
-        sendnotification("Auto Mega Tap Enabled")
-        while library.flags["autotapsploshion"] do
-            wait()
-            game:GetService("ReplicatedStorage").TapSplosion:InvokeServer()
+    function main:Bhop()
+        loadstring(game:HttpGet('https://raw.githubusercontent.com/zerovectors/bhop/master/bhop%20test',true))()
+    end
+    function main:ReJoin()
+        game:GetService('TeleportService'):Teleport(game.PlaceId)
+    end
+    function main:Spawnpoint()
+        MyChar.HumanoidRootPart.CFrame = CFrame.new(-4.68293381, 3.6104455, -1.81292093, 0.890263438, -3.4567833e-08, 0.455445975, 3.66134478e-09, 1, 6.87420041e-08, -0.455445975, -5.95309508e-08, 0.890263438)
+    end
+    function main.tables()
+        for i,islandscollected in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
+            table.insert(main.islandstable, islandscollected)
         end
-    else
-        sendnotification("Auto Mega Tap Disabled")
-    end
-end})
-
-miscellaneous:AddList({text = "Auto Rebirth Amounts", flag = "rebirthamounts", value = "1", values = {"10", "50", "500", "1000", "5000", "50000", "500000", "1000000", "5000000"}, callback = function(a)
-    library.flags["rebirthamounts"] = a
-end})
-
-miscellaneous:AddToggle({text = "Auto Rebirth", flag = "autorebirthtoggle", callback = function(a)
-    library.flags["autorebirthtoggle"] = a
-    if library.flags["autorebirthtoggle"] then
-        sendnotification("Auto Rebirth Enabled")
-        while library.flags["autorebirthtoggle"] do
-            wait(10)
-            local args = {
-                [1] = tonumber(library.flags["rebirthamounts"]),
-			}
-            game:GetService("ReplicatedStorage").PlayerRebirth:FireServer(unpack(args))
+        for i,shopscollected in pairs(game.ReplicatedFirst.PetShopHolders:GetChildren()) do
+            table.insert(main.eggstable, shopscollected)
         end
-    else
-        sendnotification("Auto Rebirth Disabled")
+        for i,potions in pairs(workspace.Lib.IngameStore.Products.Potions:GetChildren()) do
+            table.insert(main.potionstable, potions) 
+        end
+        for i,upgrades in pairs(workspace.Lib.IngameStore.Products.Upgrades:GetChildren()) do
+            table.insert(main.upgradestable, upgrades) 
+        end
+        warn('done tables')
     end
-end})
-
-miscellaneous:AddToggle({text = "Auto Spin Wheel", flag = "autospinwheel", callback = function(a)
-	library.flags["autospinwheel"] = a
-	if library.flags["autospinwheel"] then
-		sendnotification("Auto Spin Wheel Enabled")
-		while library.flags["autospinwheel"] do
-			wait()
-			local args = {
-				[1] = "WheelSpin",
-			}
-			game:GetService("ReplicatedStorage")["RepeatableRewards_TimeUntilAvailable"]:InvokeServer(unpack(args))
-		end
-	else
-		sendnotification("Auto Spin Wheel Disabled")
-	end
-end})
-
-miscellaneous:AddButton({text = "Buy AutoTap", callback = function()
-	local args = {
-		[1] = "Upgrades",
-		[2] = "UnlockAutoTap",
-	}
-	game:GetService("ReplicatedStorage").IngameStoreBuyProductMax:InvokeServer(unpack(args))
-end})
-
-miscellaneous:AddButton({text = "Unlock All Keys", callback = function()
-	for i = 1,10 do
-		for i,keys in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = keys.CFrame
-			wait(.2)
-		end
-		wait()
-		for i,keys in pairs(workspace.Teleporters.Keys:GetChildren()) do
-			game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = keys.CFrame
-			wait(.2)
-		end
-	end
-end})
-
-miscellaneous:AddButton({text = "BH0P", callback = function()
-	loadstring(game:HttpGet('https://raw.githubusercontent.com/zerovectors/bhop/master/bhop%20test',true))()
-	warn("BHopping")
-	sendnotification("BHopping")
-end})
-
-miscellaneous:AddButton({text = "ReJoin", callback = function()
-	game:GetService('TeleportService'):Teleport(game.PlaceId)
-	sendnotification("ReJoining")
-end})
-
-teleports:AddButton({text = "Spawn", callback = function()
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-4.68293381, 3.6104455, -1.81292093, 0.890263438, -3.4567833e-08, 0.455445975, 3.66134478e-09, 1, 6.87420041e-08, -0.455445975, -5.95309508e-08, 0.890263438)
-end})
-
-for i,islands in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
-	table.insert(settings.islands, islands)
+    function main:TeleportToIsland()
+        MyChar.HumanoidRootPart.CFrame = game.ReplicatedFirst.TeleportPositions:FindFirstChild(library.flags["islandselected"]).CFrame
+    end
+    function main:TeleportToShop()
+        MyChar.HumanoidRootPart.CFrame = game.ReplicatedFirst.PetShopHolders:FindFirstChild(library.flags["shopselected"]).CFrame
+    end
+    function main:cursorcolor(val)
+        game.CoreGui.uwuware.Cursor.ImageColor3 = val
+    end
+    function main:CursorTog()
+        if library.flags["CursorTog"] then
+            game.CoreGui.uwuware.Cursor.Visible = library.flags["CursorTog"]
+        else
+            game.CoreGui.uwuware.Cursor.Visible = library.flags["CursorTog"]
+        end
+    end
+    function main:splitlinecolor(val)
+        splitline.BackgroundColor3 = val
+    end
+    function main:splitlinetransparency(val)
+        splitline.BackgroundTransparency = val / 100
+    end
+    function main:splitlinethickness(val)
+        splitline.Size = UDim2.new(0, 1917, 0, val*3)
+    end
+    function main:loadspy()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/remote-spys/master/sentinel_spy", true))()
+    end
+    function main:darkdex()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dex%20v3", true))()
+    end
+    function main:getregs()
+        for i,v in next, debug.getregistry() do
+            if type(v) == 'function' then
+                if getfenv(v).script then
+                    table.foreach(debug.getupvalues(v), print)
+                    print(getfenv(v).script:GetFullName() .. '\n')
+                end
+            end
+        end
+    end
+    function main:destroyhint()
+        hintmsg:Remove()
+    end
+    Plrs.PlayerAdded:Connect(function(Plr)
+        if main.espsettings.CharAddedEvent[Plr.Name] == nil then
+            main.espsettings.CharAddedEvent[Plr.Name] = Plr.CharacterAdded:connect(function(Char)
+                if library.flags["TracersTog"] then
+                    main:CreateTracers(Plr)
+                end
+                if library.flags["ChamsTog"] then
+                    main:CreateChams(Plr)
+                end
+                if library.flags["ESPTog"] then
+                    main:RemoveESP(Plr)
+                    main:CreateESP(Plr)
+                end
+                repeat wait() until Char:FindFirstChild("HumanoidRootPart")
+                main.TracerMT[Plr.Name] = Char.HumanoidRootPart
+            end)
+        end
+        if main.creator_accounts[Plr.UserId] then
+            notification:sendnotification("Max Has Joined Your Server")
+            main:SystemChat("I Have Join Your Server")
+        elseif main.admin_accounts[Plr.UserId] then
+            notification:sendnotification("Smail Has Joined Your Server!")
+            main:SystemChat("Smail Has Join Your Server")
+        end
+    end)
+    Plrs.PlayerRemoving:Connect(function(Plr)
+        if main.espsettings.CharAddedEvent[Plr.Name] ~= nil then
+            main.espsettings.CharAddedEvent[Plr.Name]:Disconnect()
+            main.espsettings.CharAddedEvent[Plr.Name] = nil
+        end
+        if main.creator_accounts[Plr.UserId] then
+            notification:sendnotification("Max Has Left Your Server!")
+            main:SystemChat("Smail Have Left Your Server")
+        elseif main.admin_accounts[Plr.UserId] then
+            notification:sendnotification("Smail Has Left Your Server!")
+            main:SystemChat("Smail Has Left Your Server")
+        end
+        main:RemoveTracers(Plr)
+        main:RemoveChams(Plr)
+        main:RemoveESP(Plr)
+        main.TracerMT[Plr.Name] = nil
+    end)
+end
+do -- ui
+    function ui:Init()
+        do -- visuals
+            ui.visuals = library:CreateWindow("Visuals")
+            ui.visuals:AddToggle({text = "FullBright", flag = "FullBright", callback = function(a)
+                library.flags.FullBright = a
+                main:fullbright()
+            end})
+            ui.visuals:AddToggle({text = "ESP", flag = "ESPTog", callback = function(a)
+                library.flags.ESPEnabled = a
+                main:esptoggle()
+            end})
+            ui.visuals:AddToggle({text = "Chams", flag = "ChamsTog", callback = function(a)
+                library.flags.ChamsTog = a
+                main:chamstoggle()
+            end})
+            ui.visuals:AddToggle({text = "Tracers", flag = "TracersTog", callback = function(a)
+                library.flags.TracersTog = a
+                main:tracerstoggle()
+            end})
+            ui.espsettings = ui.visuals:AddFolder("ESP Settings")
+            ui.espsettings:AddColor({text = "Ally Color", flag = "allycolor", color = Color3.fromRGB(221, 3, 255), callback = function(a)
+                main.espsettings.Colors.Ally = a
+                main:updatecolors()
+            end})
+            ui.espsettings:AddColor({text = "Enemy Color", flag = "enemycolor", color = Color3.fromRGB(221, 3, 255), callback = function(a)
+                main.espsettings.Colors.Enemy = a
+                main:updatecolors()
+            end})
+            ui.espsettings:AddColor({text = "Neutral Color", flag = "enemycolor", color = Color3.fromRGB(221, 3, 255), callback = function(a)
+                main.espsettings.Colors.Neutral = a
+                main:updatecolors()
+            end})
+        end
+        do -- character
+            ui.character = library:CreateWindow("Character")
+            ui.character:AddToggle({text = "SuperSpeed", flag = "SuperSpeed", callback = function(a)
+                library.flags.SuperSpeed = a
+                main:superspeed()
+            end})
+            ui.character:AddToggle({text = "SuperJump", flag = "JumpPower", callback = function(a)
+                library.flags.SuperJump = a
+                main:superjump()
+            end})
+            ui.character:AddSlider({text = "WalkSpeed", value = 16, min = 0, max = 150, callback = function(a) 
+                main:walkspeed(a)
+            end})
+            ui.character:AddSlider({text = "JumpPower", value = 50, min = 0, max = 200, callback = function(a) 
+                main:jumppower(a)
+            end})
+            ui.character:AddToggle({text = "Fly", flag = "flytog", callback = function(a)
+                library.flags["flytog"] = a
+                main:flytoggle()
+            end})
+            ui.character:AddToggle({text = "Vehicle Fly", flag = "vflytog", callback = function(a)
+                library.flags["vflytog"] = a
+                main:vehicleflytoggle()
+            end})
+        end
+        do -- miscellaneous
+            ui.miscellaneous = library:CreateWindow("Miscellaneous")
+            ui.miscellaneous:AddToggle({text = "Low Gravity", flag = "lowgrav", callback = function(a)
+                library.flags["lowgrav"] = a
+                main:lowgravity()
+            end})
+            ui.miscellaneous:AddSlider({text = "Gravity", value = 196, min = 0, max = 196, callback = function(a) 
+                main:gravity(a)
+            end})
+            ui.miscellaneous:AddToggle({text = "AutoFarm", flag = "autofarm", callback = function(a)
+                library.flags["autofarm"] = a
+                main:autofarm()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Mega Tap", flag = "megatap", callback = function(a)
+                library.flags["megatap"] = a
+                main:megatap()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Spin Wheel", flag = "autospinwheel", callback = function(a)
+                library.flags["autospinwheel"] = a
+                main:autospinwheel()
+            end})
+            ui.miscellaneous:AddList({text = "Auto Rebirth Amounts", flag = "rebirthamounts", value = "1", values = {"10", "50", "500", "1000", "5000", "50000", "500000", "1000000", "5000000","50000000","10000000","50000000", "100000000", "200000000", "500000000", "5000000000", "10000000000", "50000000000", "500000000000", "500000000000", "1000000000000", "5000000000000", "50000000000000", "500000000000000", "1000000000000000", "50000000000000000", "500000000000000000", "1000000000000000000", "50000000000000000000", "500000000000000000000", "1000000000000000000000", "50000000000000000000000", "500000000000000000000000", "1000000000000000000000000", "50000000000000000000000000", "500000000000000000000000000", "1000000000000000000000000000", "50000000000000000000000000000", "500000000000000000000000000000", "1000000000000000000000000000000", "50000000000000000000000000000000", "500000000000000000000000000000000", "1000000000000000000000000000000000", "50000000000000000000000000000000000"}, callback = function(a)
+                library.flags["rebirthamounts"] = a
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Rebirth", flag = "autorebirthtog", callback = function(a)
+                library.flags["autorebirthtog"] = a
+                main:autorebirth()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Super Rebirth", flag = "superrebirthtog", callback = function(a)
+                library.flags["superrebirthtog"] = a
+                main:superebirth()
+            end})
+            ui.miscellaneous:AddList({text = "Auto Buy Potions", flag = "autobuypotions", values = main.potionstable, callback = function(a)
+                library.flags["autobuypotions"] = a
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Buy Potions", flag = "autobuypotionstog", callback = function(a)
+                library.flags["autobuypotionstog"] = a
+                main:AutoBuyPotions()
+            end})
+            ui.miscellaneous:AddList({text = "Auto Buy Upgrade Options", flag = "autobuyupgrades", values = main.upgradestable, callback = function(a)
+                library.flags["autobuyupgrades"] = a
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Buy Upgrades", flag = "autobuyupgradestog", callback = function(a)
+                library.flags["autobuyupgradestog"] = a
+                main:AutoBuyUpgrades()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Collect Tap Rewards", flag = "autocollecttapsreward", callback = function(a)
+                library.flags["autocollecttapsreward"] = a
+                main:AutoCollectTapsReward()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Collect Gem Rewards", flag = "autocollectgemsreward", callback = function(a)
+                library.flags["autocollectgemsreward"] = a
+                main:AutoCollectGemsReward()
+            end})
+            ui.miscellaneous:AddToggle({text = "Auto Collect SRToken Rewards", flag = "autocollectsrtokensreward", callback = function(a)
+                library.flags["autocollectsrtokensreward"] = a
+                main:AutoCollectSRTokensReward()
+            end})
+            ui.miscellaneous:AddButton({text = "Unlock All Keys", callback = function()
+                main:SystemChat("Unlocking All Keys This Could Take A Sec")
+                main:unlockkeys()
+            end})
+            ui.miscellaneous:AddButton({text = "ReJoin", callback = function()
+                main:ReJoin()
+            end})
+        end
+        do -- pets / eggs
+            main.pets = library:CreateWindow("Pets / Eggs")
+            main.pets:AddToggle({text = "Auto Equip Best Pets", flag = "autoequipbestpetstog", callback = function(a)
+                library.flags["autoequipbestpetstog"] = a
+                main:AutoEquipBestPets()
+            end})
+            main.pets:AddToggle({text = "Auto Upgrade Pets", flag = "autoupgradepets", callback = function(a)
+                library.flags["autoupgradepets"] = a
+                main:UpgradePets()
+            end})
+            main.pets:AddList({text = "Eggs", values = main.eggstable, callback = function(a)
+                library.flags["chosenegg"] = a
+            end})
+            main.pets:AddSlider({text = "Amount", flag = "autoopenamount", value = 1, min = 1, max = 3, callback = function(a)
+                library.flags["autoopenamount"] = a
+            end})
+            main.pets:AddToggle({text = "Auto Open Egg", flag = "autoopenegg", callback = function(a)
+                library.flags["autoopenegg"] = a
+                main:AutoOpenEgg()
+            end})
+        end
+        do -- teleports
+            main.tables()
+            main.teleports = library:CreateWindow("Teleports")
+            main.teleports:AddButton({text = "Spawn Point", callback = function()
+                main:Spawnpoint()
+            end})
+            main.teleports:AddList({text = "Islands", flag = "islandselected", values = main.islandstable, callback = function(a)
+                library.flags["islandselected"] = a
+                main:TeleportToIsland()
+            end})
+            main.teleports:AddList({text = "Egg Shops", flag = "shopselected", values = main.eggstable, callback = function(a)
+                library.flags["shopselected"] = a
+                main:TeleportToShop()
+            end})
+        end
+        do -- ui settings
+            main.uisettings = library:CreateWindow("UI Settings")
+            main.uisettings:AddColor({text = "Cursor Color", flag = "cursorcolor", color = Color3.fromRGB(221, 3, 255), callback = function(a)
+                main:cursorcolor(a)
+            end})
+            if main.creator_accounts[MyPlr.UserId] or main.admin_accounts[MyPlr.UserId] then
+                main.uisettings:AddToggle({text = "Cursor", state = true, flag = "CursorTog", callback = function(a)
+                    library.flags["CursorTog"] = a
+                    main:CursorTog()
+                end})
+                main.uisettings:AddToggle({text = "UI Watermark", state = true, callback = function(a)
+                    game.CoreGui:WaitForChild("uwuware").watermark.Visible = a
+                end})
+            end
+            main.uisettings:AddBind({text = "Toggle UI", key = "Q", callback = function() 
+                library:Close()
+            end})
+            main.topbar = main.uisettings:AddFolder("Top Bar")
+            main.topbar:AddColor({text = "Line Colour", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a)
+                main:splitlinecolor(a)
+            end})
+            main.topbar:AddSlider({text = "Transparency", value = 0, min = 0, max = 100, callback = function(a)
+                main:splitlinetransparency(a)
+            end})
+            main.topbar:AddSlider({text = "Line Thickness", value = 1, min = 1, max = 4, callback = function(a)
+                main:splitlinethickness(a)
+            end})
+        end
+        do -- developer options
+            if main.creator_accounts[MyPlr.UserId] then
+                main.developer = library:CreateWindow("Developer")
+                main.developer:AddButton({text = "Remote Spy", callback = function()
+                    main:loadspy()
+                end})
+                main.developer:AddButton({text = "Dark Dex v3", callback = function()
+                    main:darkdex()
+                end})
+                main.developer:AddButton({text = "Get Registry", callback = function()
+                    main:getregs()
+                end})
+            end
+        end
+    end
 end
 
-teleports:AddList({text = "Islands", flag = "islandselected", values = settings.islands, callback = function(a)
-	library.flags["islandselected"] = a
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.ReplicatedFirst.TeleportPositions:FindFirstChild(library.flags["islandselected"]).CFrame
-	sendnotification("Teleported To "..library.flags["islandselected"])
-end})
-
-for i,petshops in pairs(game.ReplicatedFirst.PetShopHolders:GetChildren()) do
-	table.insert(settings.petshops, petshops)
-end
-
-teleports:AddList({text = "Egg Shops", flag = "petshopselected", values = settings.petshops, callback = function(a)
-	library.flags["petshopselected"] = a
-	game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = game.ReplicatedFirst.PetShopHolders:FindFirstChild(library.flags["petshopselected"]).CFrame
-	sendnotification("Teleported To "..library.flags["petshopselected"])
-end})
-
-uisettings:AddColor({text = "Cursor Color", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a)
-	settings.CursorColor = a
-	game.CoreGui.uwuware.Cursor.ImageColor3 = settings.CursorColor
-end})
-
-if game.Players.LocalPlayer.UserId == 278723686 then
-	uisettings:AddToggle({text = "UI Watermark", state = true, callback = function(a)
-		game.CoreGui:WaitForChild("uwuware").watermark.Visible = a
-	end})
-	uisettings:AddToggle({text = "Cursor", state = true, callback = function(a)
-		_G.cursorenabled = a
-		game.CoreGui.uwuware.Cursor.Visible = a
-	end})
-	local devmenu = library:CreateWindow("Developer Shit")
-	devmenu:AddButton({text = "Copy Char Vector3 Position", callback = function()
-		setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position))
-		sendnotification("Copied Character Vector3 To Clipboard")
-	end})
-	devmenu:AddButton({text = "Copy Char CFrame Position", callback = function()
-		setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame))
-		sendnotification("Copied Character CFrame To Clipboard")
-	end})
-	devmenu:AddButton({text = "Copy Char CFrame Position (Tp Vers)", callback = function()
-		setclipboard("game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new("..tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame)..")")
-		sendnotification("Copied Character CFrame (Tp Vers) To Clipboard")
-	end})
-	devmenu:AddButton({text = "Custom Remote Spy", callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/remote-spys/master/sentinel_spy", true))()
-		sendnotification("Ran Custom Remote Spy")
-	end})
-	devmenu:AddButton({text = "Classic Dex (white mode)", callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/classic%20dex", true))()
-		sendnotification("Ran Classic Dex")
-	end})
-	devmenu:AddButton({text = "Dark Dex v2", callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dexv2", true))()
-		sendnotification("Ran Dark Dex v2")
-	end})
-	devmenu:AddButton({text = "Dark Dex v3", callback = function()
-		loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dex%20v3", true))()
-		sendnotification("Ran Dark Dex v3")
-	end})
-	devmenu:AddButton({text = "Dark Dex v4", callback = function()
-		loadstring(game:GetObjects('rbxassetid://2180084478')[1].Source)()
-		sendnotification("Ran Dark Dex v4")
-	end})
-elseif game.Players.LocalPlayer.UserId == 425451555 then
-	uisettings:AddToggle({text = "UI Watermark", state = true, callback = function(a)
-		game.CoreGui:WaitForChild("uwuware").watermark.Visible = a
-	end})
-	uisettings:AddToggle({text = "Cursor", state = true, callback = function(a)
-		_G.cursorenabled = a
-		game.CoreGui.uwuware.Cursor.Visible = a
-	end})
-end
-
-local toplineoptions = uisettings:AddFolder("Topbar")
-toplineoptions:AddColor({text = "Line Colour", flag = "color", color = Color3.fromRGB(221, 3, 255), callback = function(a)
-	settings.LineColour = a
-	splitline.BackgroundColor3 = settings.LineColour
-end})
-
-toplineoptions:AddSlider({text = "Transparency", value = 0, min = 0, max = 100, callback = function(a)
-	splitline.BackgroundTransparency = a / 100
-end})
-
-toplineoptions:AddSlider({text = "Line Thickness", value = 1, min = 1, max = 4, callback = function(a)
-	splitline.Size = UDim2.new(0, 1917, 0, a*3)
-end})
-
-uisettings:AddBind({text = "Toggle UI", key = "Q", callback = function() 
-	library:Close() 
-end})
-
-credits:AddLabel({text = "Vect0rs; scripts"})
-credits:AddLabel({text = "Jan; ui library"})
-credits:AddLabel({text = "Smail; helpful, cool guy"})
-
-Plrs.PlayerAdded:Connect(function(Plr)
-		if settings.CharAddedEvent[Plr.Name] == nil then
-			settings.CharAddedEvent[Plr.Name] = Plr.CharacterAdded:connect(function(Char)
-				if settings.TracersEnabled then
-					CreateTracers(Plr)
-				end
-				if settings.CHAMSEnabled then
-					CreateChams(Plr)
-				end
-				if settings.ESPEnabled then
-					RemoveESP(Plr)
-					CreateESP(Plr)
-				end
-				repeat wait() until Char:FindFirstChild("HumanoidRootPart")
-				TracerMT[Plr.Name] = Char.HumanoidRootPart
-			end)
-		end
-end)
-	
-Plrs.PlayerRemoving:Connect(function(Plr)
-		if settings.CharAddedEvent[Plr.Name] ~= nil then
-			settings.CharAddedEvent[Plr.Name]:Disconnect()
-			settings.CharAddedEvent[Plr.Name] = nil
-		end
-		RemoveTracers(Plr)
-		RemoveChams(Plr)
-		RemoveESP(Plr)
-		TracerMT[Plr.Name] = nil
-end)
-
+main:SystemChat("Okie, gimme a few secs to setup the ui uwu")
+ui:Init()
 library:Init()
-hintmsg.Text = "Initialization Complete, Enjoy 😎"
-wait(.5)
-createchangelog()
-antiafk()
-uiwatermark()
-hintmsg:Remove()
-line()
-createnotification()
-checkwhitelist()
-sendnotification("[Vect0rs Hub] Loaded; Tapping Simuwulator UI")
-sendnotification("Version; "..version)
-createinfothingy()
+main:BypassAnti()
+library:Close()
+main:vectorshub()
+notification:Init()
+loopfunctions:RunLoop("Time")
+main:Console("Initialization Complete, Enjoy 😎")
+attempt = tick()
+main:destroyhint()
+notification:sendnotification("Vect0rs Hub Loaded "..uiname.." v"..version)
+main:SystemChat("Andd Done, Have Fun Or Whatever")
+main:infothing()
