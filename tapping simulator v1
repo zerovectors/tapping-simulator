@@ -1532,10 +1532,6 @@ do -- ui
                 library.flags["flytog"] = a
                 main:flytoggle()
             end})
-            ui.character:AddToggle({text = "Vehicle Fly", flag = "vflytog", callback = function(a)
-                library.flags["vflytog"] = a
-                main:vehicleflytoggle()
-            end})
         end
         do -- miscellaneous
             ui.miscellaneous = library:CreateWindow("Miscellaneous")
