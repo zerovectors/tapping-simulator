@@ -216,94 +216,6 @@ do -- loops
             end
         end
     end)
---[[    loopfunctions:CreateLoop("Auto Delete Shiny", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Shiny") then
-                table.insert(main.petstable.shiny, v.Name)
-                local args = {
-                    main.petstable.shiny,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Sparkling", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Sparkling") then
-                table.insert(main.petstable.godly, v.Name)
-                local args = {
-                    main.petstable.sparkling,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Godly", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Godly") then
-                table.insert(main.petstable.godly, v.Name)
-                local args = {
-                    main.petstable.godly,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Mystic", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Mystic") then
-                table.insert(main.petstable.mystic, v.Name)
-                local args = {
-                    main.petstable.mystic,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Elder", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Elder") then
-                table.insert(main.petstable.elder, v.Name)
-                local args = {
-                    main.petstable.elder,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Omega", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Omega") then
-                table.insert(main.petstable.omega, v.Name)
-                local args = {
-                    main.petstable.omega,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Rainbow", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Rainbow") then
-                table.insert(main.petstable.rainbow, v.Name)
-                local args = {
-                    main.petstable.rainbow,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)
-    loopfunctions:CreateLoop("Auto Delete Secret", function()
-        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
-            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Secret") then
-                table.insert(main.petstable.secret, v.Name)
-                local args = {
-                    main.petstable.secret,
-                }
-                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
-            end
-        end
-    end)]]
 end
 do -- main
     main.espsettings = {
@@ -1506,6 +1418,9 @@ do -- main
     end
     function main:darkdex()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dex%20v3", true))()
+    end
+    function sentineldex()
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/vect0rshub/master/sentinel%20dex", true))()
     end
     function main:getregs()
         for i,v in next, debug.getregistry() do
