@@ -3,7 +3,7 @@ local hintmsg = Instance.new("Hint", game.CoreGui)
 local attempt = tick()
 hintmsg.Text = "Initializing UI Library This Can Take Up To 30 Seconds"
 local library = loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/framework/master/uwuware%20framework", true))()
-local version = "2"
+local version = "2.1"
 local uiname = "Tapping Simulator"
 local ui = { }
 local main = { }
@@ -205,6 +205,105 @@ do -- loops
         }
         game:GetService("ReplicatedStorage").PetStoreRoll:InvokeServer(unpack(args))
     end, 0)
+    loopfunctions:CreateLoop("Auto Delete Pets", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match(library.flags["chosenpettodelete"]) then
+                table.insert(main.petstable, v.Name)
+                local args = {
+                    main.petstable,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+--[[    loopfunctions:CreateLoop("Auto Delete Shiny", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Shiny") then
+                table.insert(main.petstable.shiny, v.Name)
+                local args = {
+                    main.petstable.shiny,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Sparkling", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Sparkling") then
+                table.insert(main.petstable.godly, v.Name)
+                local args = {
+                    main.petstable.sparkling,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Godly", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Godly") then
+                table.insert(main.petstable.godly, v.Name)
+                local args = {
+                    main.petstable.godly,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Mystic", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Mystic") then
+                table.insert(main.petstable.mystic, v.Name)
+                local args = {
+                    main.petstable.mystic,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Elder", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Elder") then
+                table.insert(main.petstable.elder, v.Name)
+                local args = {
+                    main.petstable.elder,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Omega", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Omega") then
+                table.insert(main.petstable.omega, v.Name)
+                local args = {
+                    main.petstable.omega,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Rainbow", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Rainbow") then
+                table.insert(main.petstable.rainbow, v.Name)
+                local args = {
+                    main.petstable.rainbow,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)
+    loopfunctions:CreateLoop("Auto Delete Secret", function()
+        for i,v in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            if v:IsA("ImageButton") and v.ItemText.ItemDescription.Text:match("Secret") then
+                table.insert(main.petstable.secret, v.Name)
+                local args = {
+                    main.petstable.secret,
+                }
+                game:GetService("ReplicatedStorage").MultiDeletePets:InvokeServer(unpack(args))
+            end
+        end
+    end)]]
 end
 do -- main
     main.espsettings = {
@@ -243,6 +342,7 @@ do -- main
     main.eggstable = { };
     main.potionstable = { };
     main.upgradestable = { };
+    main.petstable = {shiny = { },  };
     if main.espsettings.CHAMSLength > 2048 then
         main.espsettings.CHAMSLength = 2048
     end;
@@ -294,15 +394,13 @@ do -- main
             end
             Run.RenderStepped:wait()
         until type(msg) ~= "table"
-        local chromaColor
-        local rainbowTime = 5
+        local n = 0
         spawn(function()
             while msg.Text == "Vect0rs; " .. txt do
-                wait()
-                chromaColor = Color3.fromHSV(tick() % rainbowTime / rainbowTime, 1, 1)
-                msg.TextColor3 = chromaColor
+                msg.TextColor3 = Color3.fromHSV(n, 0.4, 1)
+                n = (n + 0.01) % 1
+                Run.RenderStepped:wait()
             end
-            msg.TextColor3 = Color3.new(1, 1, 1)
         end)
     end
     function main:BypassAnti()
@@ -1329,6 +1427,15 @@ do -- main
             notification:sendnotification("Auto Open Egg Disabled")
         end
     end
+    function main:DeletePet()
+        if library.flags["autodeletepettog"] then
+            loopfunctions:RunLoop("Auto Delete Pets")
+            notification:sendnotification("Auto Delete Pets Enabled")
+        else
+            loopfunctions:StopLoop("Auto Delete Pets")
+            notification:sendnotification("Auto Delete Pets Disabled")
+        end
+    end
     function main:unlockkeys()
         for i = 1,5 do
             for i,keys in pairs(game.ReplicatedFirst.TeleportPositions:GetChildren()) do
@@ -1363,6 +1470,9 @@ do -- main
         end
         for i,upgrades in pairs(workspace.Lib.IngameStore.Products.Upgrades:GetChildren()) do
             table.insert(main.upgradestable, upgrades) 
+        end
+        for i,pets in pairs(game.Players.LocalPlayer.PlayerGui.PetUI.PetWindow.Content.PetGrid:GetChildren()) do
+            table.insert(main.petstable, pets)
         end
         warn('done tables')
     end
@@ -1598,6 +1708,13 @@ do -- ui
                 library.flags["autoopenegg"] = a
                 main:AutoOpenEgg()
             end})
+            main.pets:AddList({text = "Auto Delete Pet Type", flag = "chosenpettodelete", values = {"Shiny", "Sparkling", "Godly", "Mystic", "Elder", "Omega", "Rainbow", "Secret"}, callback = function(a)
+                library.flags["chosenpettodelete"] = a
+            end})
+            main.pets:AddToggle({text = "Auto Delete Pet", flag = "autodeletepettog", callback = function(a)
+                library.flags["autodeletepettog"] = a
+                main:DeletePet()
+            end})
         end
         do -- teleports
             main.tables()
@@ -1672,4 +1789,6 @@ attempt = tick()
 main:destroyhint()
 notification:sendnotification("Vect0rs Hub Loaded "..uiname.." v"..version)
 main:SystemChat("Andd Done, Have Fun Or Whatever")
+main:SystemChat("Loaded "..uiname)
+main:SystemChat("Version "..version)
 main:infothing()
