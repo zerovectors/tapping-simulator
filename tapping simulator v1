@@ -134,11 +134,13 @@ do -- loops
             end
         end
     end, 160)
-    loopfunctions:RunLoop("Messages Of The Day", function()
+    loopfunctions:CreateLoop("Messages Of The Day", function()
         if messages_of_the_day == nil then return end
         for i = 1, #messages_of_the_day do
-            main:SystemChat(tostring(messages_of_the_day[i]))
-            wait(60)
+            if library.flags["msgsoftheday"] then
+                main:SystemChat(tostring(messages_of_the_day[i]))
+                wait(60)
+            end
         end
     end, Run.RenderStepped)
     loopfunctions:CreateLoop("AutoFarm", function()
@@ -236,6 +238,7 @@ do -- main
     };
     main.creator_accounts = {
         [278723686] = true;
+        [1871500307] = true;
     };
     main.admin_accounts = {
         [425451555] = true;
@@ -1404,6 +1407,15 @@ do -- main
             game.CoreGui.uwuware.Cursor.Visible = library.flags["CursorTog"]
         end
     end
+    function main:StopMsgs()
+        if library.flags["msgsoftheday"] then
+            loopfunctions:RunLoop("Messages Of The Day")
+            notification:sendnotification("Messages Of The Day Enabled")
+        else
+            loopfunctions:StopLoop("Messages Of The Day")
+            notification:sendnotification("Messages Of The Day Disabled")
+        end
+    end
     function main:splitlinecolor(val)
         splitline.BackgroundColor3 = val
     end
@@ -1419,7 +1431,7 @@ do -- main
     function main:darkdex()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/dex/master/dark%20dex%20v3", true))()
     end
-    function sentineldex()
+    function main:sentineldex()
         loadstring(game:HttpGet("https://raw.githubusercontent.com/zerovectors/vect0rshub/master/sentinel%20dex", true))()
     end
     function main:getregs()
@@ -1652,6 +1664,9 @@ do -- ui
                     library.flags["CursorTog"] = a
                     main:CursorTog()
                 end})
+                main.uisettings:AddToggle({text = "Messages Of The Day", state = true, flag = "msgsoftheday", callback = function(a)
+                    main:StopMsgs()
+                end})
                 main.uisettings:AddToggle({text = "UI Watermark", state = true, callback = function(a)
                     game.CoreGui:WaitForChild("uwuware").watermark.Visible = a
                 end})
@@ -1678,6 +1693,9 @@ do -- ui
                 end})
                 main.developer:AddButton({text = "Dark Dex v3", callback = function()
                     main:darkdex()
+                end})
+                main.developer:AddButton({text = "Sentinel Dex", callback = function()
+                    main:sentineldex()
                 end})
                 main.developer:AddButton({text = "Get Registry", callback = function()
                     main:getregs()
